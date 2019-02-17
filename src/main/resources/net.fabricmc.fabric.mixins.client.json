@@ -18,6 +18,7 @@
     "events.playerinteraction.MixinClientPlayerInteractionManager",
     "events.playerinteraction.MixinMinecraftClient",
     "events.tick.MixinMinecraftClient",
+    "networking.MixinClientLoginNetworkHandler",
     "networking.MixinClientPlayNetworkHandler",
     "registry.client.MixinBlockColorMap",
     "registry.client.MixinItemColorMap",

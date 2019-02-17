@@ -107,4 +107,8 @@ public class ServerSidePacketRegistryImpl extends PacketRegistryImpl implements 
 		CustomPayloadC2SPacketAccessor accessor = ((CustomPayloadC2SPacketAccessor) packet);
 		return accept(accessor.getChannel(), context, accessor.getData());
 	}
+
+	public boolean handleLoginResponse(LoginQueryResponseC2SPacket packet) {
+		return false;
+	}
 }
