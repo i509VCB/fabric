@@ -1,12 +1,20 @@
 {
   "required": true,
-  "package": "net.fabricmc.fabric.mixin.networkinghandshake",
+  "package": "net.fabricmc.fabric.mixin.handshake",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-
+    "MixinMinecraftServer",
+    "MixinServerMetadata",
+    "MixinServerMetadata_Serializer",
+    "QueryResponseS2CPacketAccessor",
+    "MixinQueryResponseS2CPacket"
   ],
   "client": [
-
+    "client.MixinMultiplayerServerListPinger_Inner",
+    "client.MixinLanServerPinger",
+    "client.MixinServerInfo",
+    "client.MixinLanServerPinger",
+    "client.MixinMultiplayerServerListWidget_ServerEntry"
   ],
   "injectors": {
     "defaultRequire": 1
