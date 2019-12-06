@@ -32,6 +32,7 @@ public abstract class MixinMultiplayerServerListWidget_ServerEntry {
 
 		if(fabricInfo.isFabricServer()) {
 			if((fabricInfo.getFabricMeta().getMajorVersion() == FabricHelloPacketHandler.MAJOR_VERSION) && fabricInfo.getFabricMeta().getMinorVersion() == FabricHelloPacketHandler.MINOR_VERSION) {
+
 				draw(xWidth+260, int_2+6, new Identifier("fabric-networking-handshake-v1", "textures/gui/fabricserverlogo.png")); // TODO how to shrink logo down
 				return;
 			}
