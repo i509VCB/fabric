@@ -22,7 +22,7 @@ import net.minecraft.loot.condition.LootCondition;
 import net.minecraft.loot.entry.LootEntry;
 import net.minecraft.loot.function.LootFunction;
 
-import net.fabricmc.fabric.mixin.loot.LootPoolBuilderHooks;
+import net.fabricmc.fabric.mixin.loot.table.LootPoolBuilderHooks;
 
 public class FabricLootPoolBuilder extends LootPool.Builder {
 	private final LootPoolBuilderHooks extended = (LootPoolBuilderHooks) this;
@@ -47,13 +47,13 @@ public class FabricLootPoolBuilder extends LootPool.Builder {
 
 	@Override
 	public FabricLootPoolBuilder withCondition(LootCondition.Builder condition) {
-		super.method_356(condition);
+		super.withCondition(condition);
 		return this;
 	}
 
 	@Override
 	public FabricLootPoolBuilder withFunction(LootFunction.Builder function) {
-		super.method_353(function);
+		super.withFunction(function);
 		return this;
 	}
 
