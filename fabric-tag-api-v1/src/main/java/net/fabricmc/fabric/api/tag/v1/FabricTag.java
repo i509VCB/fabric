@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.fabricmc.fabric.api.tag;
+package net.fabricmc.fabric.api.tag.v1;
 
 /**
  * Interface implemented by {@link net.minecraft.tag.Tag} instances when
@@ -22,7 +22,6 @@ package net.fabricmc.fabric.api.tag;
  *
  * @param <T>
  */
-@Deprecated
 public interface FabricTag<T> {
 	/**
 	 * @return True if the given tag has been "replaced" by a datapack at least once.

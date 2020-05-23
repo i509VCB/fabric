@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package net.fabricmc.fabric.api.tag;
+package net.fabricmc.fabric.api.tag.v1;
 
 /**
- * Interface implemented by {@link net.minecraft.tag.Tag} instances when
+ * Interface implemented by {@link net.minecraft.tag.Tag.Builder} instances when
  * Fabric API is present.
  *
  * @param <T>
  */
-@Deprecated
-public interface FabricTag<T> {
+public interface FabricTagBuilder<T> {
 	/**
-	 * @return True if the given tag has been "replaced" by a datapack at least once.
+	 * Clear the contained entries and mark the tag as replaced.
 	 */
-	boolean hasBeenReplaced();
+	void clearTagEntries();
 }

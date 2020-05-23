@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package net.fabricmc.fabric.mixin.tag.extension;
+package net.fabricmc.fabric.mixin.tag;
 
 import java.util.List;
 import java.util.Optional;
 
 import com.google.gson.JsonObject;
+import net.fabricmc.fabric.api.tag.v1.FabricTagBuilder;
+import net.fabricmc.fabric.impl.tag.FabricTagHooks;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -29,9 +31,6 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.tag.Tag;
-
-import net.fabricmc.fabric.api.tag.FabricTagBuilder;
-import net.fabricmc.fabric.impl.tag.extension.FabricTagHooks;
 
 @Mixin(Tag.Builder.class)
 public class MixinTagBuilder<T> implements FabricTagBuilder<T> {
@@ -43,7 +42,7 @@ public class MixinTagBuilder<T> implements FabricTagBuilder<T> {
 
 	@Redirect(method = "build", at = @At(value = "INVOKE", target = "Ljava/util/Optional;of(Ljava/lang/Object;)Ljava/util/Optional;"))
 	private Optional<?> build(Object tagObj) {
-		((FabricTagHooks) tagObj).fabric_setExtraData(fabric_clearCount);
+		((FabricTagHooks) tagObj).fabric_setClearCount(fabric_clearCount);
 		return Optional.of(tagObj);
 	}
 

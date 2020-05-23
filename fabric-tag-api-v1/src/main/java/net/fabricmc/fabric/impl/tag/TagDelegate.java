@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.fabricmc.fabric.impl.tag.extension;
+package net.fabricmc.fabric.impl.tag;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -37,8 +37,8 @@ public final class TagDelegate<T> implements Tag.Identified<T>, FabricTag<T>, Fa
 	}
 
 	@Override
-	public boolean contains(T var1) {
-		return getTag().contains(var1);
+	public boolean contains(T entry) {
+		return getTag().contains(entry);
 	}
 
 	@Override

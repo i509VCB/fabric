@@ -22,6 +22,7 @@ package net.fabricmc.fabric.api.tag;
  *
  * @param <T>
  */
+@Deprecated
 public interface FabricTagBuilder<T> {
 	/**
 	 * Clear the contained entries and mark the tag as replaced.

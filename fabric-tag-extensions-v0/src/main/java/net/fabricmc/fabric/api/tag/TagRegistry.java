@@ -22,39 +22,39 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
-import net.minecraft.tag.BlockTags;
-import net.minecraft.tag.EntityTypeTags;
-import net.minecraft.tag.FluidTags;
-import net.minecraft.tag.ItemTags;
 import net.minecraft.tag.Tag;
 import net.minecraft.tag.TagContainer;
 import net.minecraft.util.Identifier;
 
-import net.fabricmc.fabric.impl.tag.extension.TagDelegate;
-
 /**
  * Helper methods for registering Tags.
  */
+@Deprecated
 public final class TagRegistry {
 	private TagRegistry() { }
 
+	@Deprecated
 	public static <T> Tag.Identified<T> create(Identifier id, Supplier<TagContainer<T>> containerSupplier) {
-		return new TagDelegate<>(id, containerSupplier);
+		return net.fabricmc.fabric.api.tag.v1.TagRegistry.create(id, containerSupplier);
 	}
 
+	@Deprecated
 	public static Tag<Block> block(Identifier id) {
-		return create(id, BlockTags::getContainer);
+		return net.fabricmc.fabric.api.tag.v1.TagRegistry.block(id);
 	}
 
+	@Deprecated
 	public static Tag<EntityType<?>> entityType(Identifier id) {
-		return create(id, EntityTypeTags::getContainer);
+		return net.fabricmc.fabric.api.tag.v1.TagRegistry.entityType(id);
 	}
 
+	@Deprecated
 	public static Tag<Fluid> fluid(Identifier id) {
-		return create(id, FluidTags::getContainer);
+		return net.fabricmc.fabric.api.tag.v1.TagRegistry.fluid(id);
 	}
 
+	@Deprecated
 	public static Tag<Item> item(Identifier id) {
-		return create(id, ItemTags::getContainer);
+		return net.fabricmc.fabric.api.tag.v1.TagRegistry.item(id);
 	}
 }

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package net.fabricmc.fabric.impl.tag.extension;
+package net.fabricmc.fabric.impl.tag;
 
 public interface FabricTagHooks {
-	void fabric_setExtraData(int clearCount);
+	void fabric_setClearCount(int clearCount);
 }
