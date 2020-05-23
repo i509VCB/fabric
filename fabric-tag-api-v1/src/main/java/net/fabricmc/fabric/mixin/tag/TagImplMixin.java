@@ -14,22 +14,28 @@
  * limitations under the License.
  */
 
-package net.fabricmc.fabric.api.tag;
+package net.fabricmc.fabric.mixin.tag;
+
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 
 import net.minecraft.tag.Tag;
+import net.minecraft.tag.SetTag;
 
-/**
- * Interface implemented by {@link net.minecraft.tag.Tag} instances when
- * Fabric API is present.
- *
- * @param <T>
- *
- * @deprecated Please use {@link net.fabricmc.fabric.api.tag.v1.TagHelper#hasBeenReplaced(Tag)} instead.
- */
-@Deprecated
-public interface FabricTag<T> {
-	/**
-	 * @return True if the given tag has been "replaced" by a datapack at least once.
-	 */
-	boolean hasBeenReplaced();
+import net.fabricmc.fabric.impl.tag.FabricTagExtensions;
+
+@Mixin(value = SetTag.class, targets = {"net.minecraft.tag.Tag$1", "net.minecraft.tag.GlobalTagAccessor$CachedTag"})
+public abstract class TagImplMixin<T> implements FabricTagExtensions, Tag<T> {
+	@Unique
+	private int fabric_clearCount;
+
+	@Override
+	public boolean fabric_hasBeenReplaced() {
+		return fabric_clearCount > 0;
+	}
+
+	@Override
+	public void fabric_setClearCount(int clearCount) {
+		this.fabric_clearCount = clearCount;
+	}
 }

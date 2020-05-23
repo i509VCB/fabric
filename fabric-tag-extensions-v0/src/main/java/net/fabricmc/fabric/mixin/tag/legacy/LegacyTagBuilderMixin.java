@@ -14,29 +14,19 @@
  * limitations under the License.
  */
 
-package net.fabricmc.fabric.mixin.tag.extension;
+package net.fabricmc.fabric.mixin.tag.legacy;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 
 import net.minecraft.tag.Tag;
-import net.minecraft.tag.SetTag;
 
-import net.fabricmc.fabric.api.tag.FabricTag;
-import net.fabricmc.fabric.impl.tag.extension.FabricTagHooks;
+import net.fabricmc.fabric.api.tag.v1.TagHelper;
 
-@Mixin(value = {SetTag.class}, targets = {"net.minecraft.tag.Tag$1", "net.minecraft.tag.GlobalTagAccessor$CachedTag"})
-public abstract class MixinTagImpl<T> implements FabricTag<T>, FabricTagHooks, Tag<T> {
-	@Unique
-	private int fabric_clearCount;
-
+@Mixin(Tag.Builder.class)
+public abstract class LegacyTagBuilderMixin<T> implements net.fabricmc.fabric.api.tag.FabricTagBuilder<T> {
 	@Override
-	public boolean hasBeenReplaced() {
-		return fabric_clearCount > 0;
-	}
-
-	@Override
-	public void fabric_setExtraData(int clearCount) {
-		this.fabric_clearCount = clearCount;
+	public void clearTagEntries() {
+		// Forward to modern equivalent
+		TagHelper.clearEntries((Tag.Builder) (Object) this);
 	}
 }
