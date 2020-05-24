@@ -23,7 +23,7 @@ import net.minecraft.tag.Tag;
 import net.minecraft.tag.TagContainer;
 import net.minecraft.util.Identifier;
 
-import net.fabricmc.fabric.api.tag.FabricTag;
+import net.fabricmc.fabric.api.tag.v1.FabricTag;
 
 public final class TagDelegate<T> implements Tag.Identified<T>, FabricTag<T>, FabricTagHooks {
 	private final Identifier id;
@@ -81,7 +81,7 @@ public final class TagDelegate<T> implements Tag.Identified<T>, FabricTag<T>, Fa
 	}
 
 	@Override
-	public void fabric_setExtraData(int clearCount) {
+	public void fabric_setClearCount(int clearCount) {
 		this.clearCount = clearCount;
 	}
 
