@@ -1,8 +1,5 @@
 package net.fabricmc.fabric.impl.registry.tag;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.class_5318;
 import net.minecraft.enchantment.Enchantment;
@@ -30,10 +27,9 @@ public final class ExtraTagInternals {
 	 */
 	public static final int MINOR_VERSION = 0;
 
-	static RegistryTagContainer<Biome> BIOME_TAG_CONTAINER = new RegistryTagContainer<>(Registry.BIOME, "tags/biomes", "biomes");
+	static RegistryTagContainer<Biome> BIOME_TAG_CONTAINER = createBiomeContainer();
+
 	static RegistryTagContainer<BlockEntityType<?>> BLOCK_ENTITY_TAG_CONTAINER = new RegistryTagContainer<>(Registry.BLOCK_ENTITY_TYPE, "tags/blockentities", "blockentities");
-	// Dimensions require special handling
-	static RegistryTagContainer<DimensionType> DIMENSION_TYPE_TAG_CONTAINER = createEmptyDimensionContainer();
 	static RegistryTagContainer<Enchantment> ENCHANTMENT_TAG_CONTAINER = new RegistryTagContainer<>(Registry.ENCHANTMENT, "tags/enchantments", "enchantments");
 	static RegistryTagContainer<PaintingMotive> PAINTING_MOTIVE_TAG_CONTAINER = new RegistryTagContainer<>(Registry.PAINTING_MOTIVE, "tags/painting_motives", "painting_motives");
 	static RegistryTagContainer<ParticleType<?>> PARTICLE_TYPE_TAG_CONTAINER = new RegistryTagContainer<>(Registry.PARTICLE_TYPE, "tags/particle_types", "particle_types");
@@ -44,8 +40,15 @@ public final class ExtraTagInternals {
 	static RegistryTagContainer<VillagerProfession> VILLAGER_PROFESSION_CONTAINER = new RegistryTagContainer<>(Registry.VILLAGER_PROFESSION, "tags/villager_professions", "villager_professions");
 	static RegistryTagContainer<VillagerType> VILLAGER_TYPE_CONTAINER = new RegistryTagContainer<>(Registry.VILLAGER_TYPE, "tags/villager_types", "villager_types");
 
+	// Dimensions require special handling
+	static RegistryTagContainer<DimensionType> DIMENSION_TYPE_TAG_CONTAINER = createEmptyDimensionContainer();
+
 	public static RegistryTagContainer<Biome> getBiomeContainer() {
 		return BIOME_TAG_CONTAINER;
+	}
+
+	static RegistryTagContainer<Biome> createBiomeContainer() {
+		return new RegistryTagContainer<>(Registry.BIOME, "tags/biomes", "biomes");
 	}
 
 	public static RegistryTagContainer<BlockEntityType<?>> getBlockEntityContainer() {
@@ -98,23 +101,5 @@ public final class ExtraTagInternals {
 
 	private static RegistryTagContainer<DimensionType> createEmptyDimensionContainer() {
 		return new RegistryTagContainer<>(new EmptyRegistry<>(), "tags/dimensions", "dimensions");
-	}
-
-	// TODO: Mark all these registries as `SYNCED` since registry tag containers use raw ids.
-	private static List<Registry<?>> getSyncedRegistries() {
-		final List<Registry<?>> registries = new ArrayList<>();
-		// Supported registries for tags v1.0
-		registries.add(Registry.BIOME);
-		registries.add(Registry.ENCHANTMENT);
-		registries.add(Registry.PAINTING_MOTIVE);
-		registries.add(Registry.PARTICLE_TYPE);
-		registries.add(Registry.POINT_OF_INTEREST_TYPE);
-		registries.add(Registry.POTION);
-		registries.add(Registry.SOUND_EVENT);
-		registries.add(Registry.STATUS_EFFECT);
-		registries.add(Registry.VILLAGER_PROFESSION);
-		registries.add(Registry.VILLAGER_TYPE);
-
-		return registries;
 	}
 }

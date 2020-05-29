@@ -3,13 +3,9 @@ package net.fabricmc.fabric.impl.registry.tag;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import java.util.stream.Collectors;
 
-import com.mojang.datafixers.util.Pair;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.mixin.registry.tag.RegistryTagContainerAccessor;
 
@@ -17,32 +13,43 @@ import net.minecraft.class_5318;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.tag.RegistryTagContainer;
-import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.dimension.DimensionType;
 
 public final class FabricTagManager implements IdentifiableResourceReloadListener {
-	private final List<Registry<?>> registries;
+	private final List<Registry<?>> syncedRegistries;
+	private final List<Registry<?>> unsyncedRegistries;
 
 	FabricTagManager() {
-		this.registries = Collections.unmodifiableList(getSyncedRegistries());
+		this.syncedRegistries = Collections.unmodifiableList(getSyncedRegistries());
+		this.unsyncedRegistries = Collections.unmodifiableList(getUnsyncedRegistries());
 	}
 
-	private static List<Registry<?>> getSyncedRegistries() {
+	public static List<Registry<?>> getSyncedRegistries() {
 		final List<Registry<?>> registries = new ArrayList<>();
-		// Supported registries for tags v1.0
-		registries.add(Registry.BIOME);
-		registries.add(Registry.ENCHANTMENT);
-		registries.add(Registry.PAINTING_MOTIVE);
-		registries.add(Registry.PARTICLE_TYPE);
-		registries.add(Registry.POINT_OF_INTEREST_TYPE);
-		registries.add(Registry.POTION);
-		registries.add(Registry.SOUND_EVENT);
-		registries.add(Registry.STATUS_EFFECT);
-		registries.add(Registry.VILLAGER_PROFESSION);
-		registries.add(Registry.VILLAGER_TYPE);
+		// Supported already synced registries for tags v1.0
+		registries.add(Registry.BIOME); // Synced ID
+		registries.add(Registry.PAINTING_MOTIVE); // Synced ID
+		registries.add(Registry.PARTICLE_TYPE); // Synced ID
+		registries.add(Registry.SOUND_EVENT); // Synced ID
+		registries.add(Registry.STATUS_EFFECT); // Synced ID
+		registries.add(Registry.VILLAGER_PROFESSION); // Synced ID
+		registries.add(Registry.VILLAGER_TYPE); // Synced ID
+		registries.add(Registry.ENCHANTMENT); // Synced ID
+
+		return registries;
+	}
+
+	public static List<Registry<?>> getUnsyncedRegistries() {
+		// Supported but unsynced registries for v1.0
+		final List<Registry<?>> registries = new ArrayList<>();
+
+		// Special cases
+		registries.add(Registry.POTION); // Not synced by ID, register to sync ids
+		registries.add(Registry.BLOCK_ENTITY_TYPE); // Not synced by ID, register to sync ids
+		registries.add(Registry.POINT_OF_INTEREST_TYPE); // TODO: Not synced by ID, not even sent to clients
 
 		return registries;
 	}
@@ -76,7 +83,7 @@ public final class FabricTagManager implements IdentifiableResourceReloadListene
 	public void toPacket(PacketByteBuf buf) {
 		buf.writeInt(ExtraTagInternals.MINOR_VERSION);
 
-		for (Registry<?> registry : this.registries) {
+		for (Registry<?> registry : this.syncedRegistries) {
 			final Identifier id = ((Registry) Registry.REGISTRIES).getId(registry);
 
 			if (id == null) {
