@@ -26,6 +26,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.network.ClientPlayerInteractionManager;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
@@ -40,25 +43,10 @@ import net.fabricmc.fabric.api.event.client.player.ClientPickBlockGatherCallback
 public abstract class MixinMinecraftClient {
 	private boolean fabric_itemPickCancelled;
 
-	@SuppressWarnings("deprecation")
-	private ItemStack fabric_emulateOldPick() {
-		MinecraftClient client = (MinecraftClient) (Object) this;
-		ClientPickBlockCallback.Container ctr = new ClientPickBlockCallback.Container(ItemStack.EMPTY);
-		ClientPickBlockCallback.EVENT.invoker().pick(client.player, client.crosshairTarget, ctr);
-		return ctr.getStack();
-	}
-
 	@Inject(at = @At("HEAD"), method = "doItemPick", cancellable = true)
 	private void fabric_doItemPickWrapper(CallbackInfo info) {
-		MinecraftClient client = (MinecraftClient) (Object) this;
-
 		// Do a "best effort" emulation of the old events.
-		ItemStack stack = ClientPickBlockGatherCallback.EVENT.invoker().pick(client.player, client.crosshairTarget);
-
-		// TODO: Remove in 0.3.0
-		if (stack.isEmpty()) {
-			stack = fabric_emulateOldPick();
-		}
+		ItemStack stack = ClientPickBlockGatherCallback.EVENT.invoker().pick(this.player, this.crosshairTarget);
 
 		if (stack.isEmpty()) {
 			// fall through
@@ -66,25 +54,25 @@ public abstract class MixinMinecraftClient {
 			info.cancel();
 
 			// I don't like that we clone vanilla logic here, but it's our best bet for now.
-			PlayerInventory playerInventory = client.player.inventory;
+			PlayerInventory playerInventory = this.player.inventory;
 
-			if (client.player.abilities.creativeMode && Screen.hasControlDown() && client.crosshairTarget.getType() == HitResult.Type.BLOCK) {
-				BlockEntity be = client.world.getBlockEntity(((BlockHitResult) client.crosshairTarget).getBlockPos());
+			if (this.player.abilities.creativeMode && Screen.hasControlDown() && this.crosshairTarget.getType() == HitResult.Type.BLOCK) {
+				BlockEntity be = this.world.getBlockEntity(((BlockHitResult) this.crosshairTarget).getBlockPos());
 
 				if (be != null) {
 					stack = addBlockEntityNbt(stack, be);
 				}
 			}
 
-			stack = ClientPickBlockApplyCallback.EVENT.invoker().pick(client.player, client.crosshairTarget, stack);
+			stack = ClientPickBlockApplyCallback.EVENT.invoker().pick(this.player, this.crosshairTarget, stack);
 
 			if (stack.isEmpty()) {
 				return;
 			}
 
-			if (client.player.abilities.creativeMode) {
+			if (this.player.abilities.creativeMode) {
 				playerInventory.addPickBlock(stack);
-				client.interactionManager.clickCreativeStack(client.player.getStackInHand(Hand.MAIN_HAND), 36 + playerInventory.selectedSlot);
+				this.interactionManager.clickCreativeStack(this.player.getStackInHand(Hand.MAIN_HAND), 36 + playerInventory.selectedSlot);
 			} else {
 				int slot = playerInventory.getSlotWithStack(stack);
 
@@ -92,7 +80,7 @@ public abstract class MixinMinecraftClient {
 					if (PlayerInventory.isValidHotbarIndex(slot)) {
 						playerInventory.selectedSlot = slot;
 					} else {
-						client.interactionManager.pickFromInventory(slot);
+						this.interactionManager.pickFromInventory(slot);
 					}
 				}
 			}
@@ -101,9 +89,16 @@ public abstract class MixinMinecraftClient {
 
 	@Shadow
 	public abstract void doItemPick();
-
 	@Shadow
 	public abstract ItemStack addBlockEntityNbt(ItemStack itemStack_1, BlockEntity blockEntity_1);
+	@Shadow
+	public ClientPlayerEntity player;
+	@Shadow
+	public HitResult crosshairTarget;
+	@Shadow
+	public ClientWorld world;
+	@Shadow
+	public ClientPlayerInteractionManager interactionManager;
 
 	@ModifyVariable(at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerInventory;getSlotWithStack(Lnet/minecraft/item/ItemStack;)I"), method = "doItemPick", ordinal = 0)
 	public ItemStack modifyItemPick(ItemStack stack) {
