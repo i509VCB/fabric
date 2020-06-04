@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.Optional;
 
 import com.google.gson.JsonObject;
-import net.fabricmc.fabric.api.tag.v1.FabricTagBuilder;
-import net.fabricmc.fabric.impl.tag.FabricTagHooks;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -31,6 +29,9 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.tag.Tag;
+
+import net.fabricmc.fabric.api.tag.v1.FabricTagBuilder;
+import net.fabricmc.fabric.impl.tag.FabricTagHooks;
 
 @Mixin(Tag.Builder.class)
 public class MixinTagBuilder<T> implements FabricTagBuilder<T> {

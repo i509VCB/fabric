@@ -1,4 +1,20 @@
-package net.fabricmc.fabric.impl.registry.tag;
+/*
+ * Copyright (c) 2016, 2017, 2018, 2019 FabricMC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package net.fabricmc.fabric.impl.tag;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -7,16 +23,16 @@ import java.util.Set;
 
 import com.mojang.serialization.Lifecycle;
 
-import net.minecraft.class_5321;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 
 /**
- * An empty registry. This is immutable.
+ * An empty registry.
  * @param <T> The type this registry should hold.
  */
 final class EmptyRegistry<T> extends Registry<T> {
-	public EmptyRegistry() {
+	EmptyRegistry() {
 		super(null, Lifecycle.experimental());
 	}
 
@@ -26,8 +42,8 @@ final class EmptyRegistry<T> extends Registry<T> {
 	}
 
 	@Override
-	public class_5321<T> method_29113(T object) {
-		throw new IllegalStateException("Unregistered registry element: " + object + " in " + this);
+	public Optional<RegistryKey<T>> getKey(T value) {
+		return Optional.empty();
 	}
 
 	@Override
@@ -36,7 +52,7 @@ final class EmptyRegistry<T> extends Registry<T> {
 	}
 
 	@Override
-	public T method_29107(class_5321<T> arg) {
+	public T get(RegistryKey<T> key) {
 		return null;
 	}
 
@@ -61,12 +77,7 @@ final class EmptyRegistry<T> extends Registry<T> {
 	}
 
 	@Override
-	public boolean method_29112(class_5321<T> arg) {
-		return false;
-	}
-
-	@Override
-	public boolean method_29111(int i) {
+	public boolean containsId(int id) {
 		return false;
 	}
 

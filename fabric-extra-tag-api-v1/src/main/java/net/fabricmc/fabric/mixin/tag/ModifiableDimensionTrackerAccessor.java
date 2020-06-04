@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package net.fabricmc.fabric.mixin.tag.legacy;
+package net.fabricmc.fabric.mixin.tag;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-import net.fabricmc.fabric.api.tag.v1.FabricTag;
+import net.minecraft.util.registry.SimpleRegistry;
+import net.minecraft.world.dimension.DimensionTracker;
+import net.minecraft.world.dimension.DimensionType;
 
-@Mixin(FabricTag.class)
-public interface LegacyFabricTagMixin<T> extends net.fabricmc.fabric.api.tag.FabricTag<T> {
+@Mixin(DimensionTracker.Modifiable.class)
+public interface ModifiableDimensionTrackerAccessor {
+	@Accessor("registry")
+	SimpleRegistry<DimensionType> getRegistry();
 }
