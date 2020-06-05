@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.fabricmc.fabric.api.tag.v1;
+package net.fabricmc.fabric.api.tag.extra.v1;
 
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.enchantment.Enchantment;
@@ -31,7 +31,9 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.poi.PointOfInterestType;
 
-import net.fabricmc.fabric.impl.tag.ExtraTagInternals;
+import net.fabricmc.fabric.api.tag.v1.TagRegistry;
+import net.fabricmc.fabric.impl.tag.extra.ExtraContainers;
+import net.fabricmc.fabric.impl.tag.extra.ExtraTagNetworking;
 
 public final class ExtraTagRegistry {
 	// Please note, all tag entries should be alphabetical.
@@ -39,50 +41,51 @@ public final class ExtraTagRegistry {
 	}
 
 	public static Tag.Identified<Biome> biome(Identifier id) {
-		return TagRegistry.create(id, ExtraTagInternals::getBiomeContainer);
+		return TagRegistry.create(id, ExtraContainers::getBiomeContainer);
 	}
 
 	public static Tag.Identified<BlockEntityType<?>> blockEntity(Identifier id) {
-		return TagRegistry.create(id, ExtraTagInternals::getBlockEntityContainer);
+		return TagRegistry.create(id, ExtraContainers::getBlockEntityContainer);
 	}
 
 	public static Tag.Identified<DimensionType> dimension(Identifier id) {
-		return TagRegistry.create(id, ExtraTagInternals::getDimensionTypeContainer);
+		throw new AssertionError("Implement Me");
+		//return TagRegistry.create(id, ExtraContainers::getDimensionTypeContainer); FIXME: IMPL
 	}
 
 	public static Tag.Identified<Enchantment> enchantment(Identifier id) {
-		return TagRegistry.create(id, ExtraTagInternals::getEnchantmentContainer);
+		return TagRegistry.create(id, ExtraContainers::getEnchantmentContainer);
 	}
 
 	public static Tag.Identified<PaintingMotive> painting(Identifier id) {
-		return TagRegistry.create(id, ExtraTagInternals::getPaintingContainer);
+		return TagRegistry.create(id, ExtraContainers::getPaintingContainer);
 	}
 
 	public static Tag.Identified<ParticleType<?>> particleType(Identifier id) {
-		return TagRegistry.create(id, ExtraTagInternals::getParticleTypeContainer);
+		return TagRegistry.create(id, ExtraContainers::getParticleTypeContainer);
 	}
 
 	public static Tag.Identified<PointOfInterestType> pointOfInterestType(Identifier id) {
-		return TagRegistry.create(id, ExtraTagInternals::getPointOfInterestTypeContainer);
+		return TagRegistry.create(id, ExtraContainers::getPointOfInterestTypeContainer);
 	}
 
 	public static Tag.Identified<Potion> potion(Identifier id) {
-		return TagRegistry.create(id, ExtraTagInternals::getPotionContainer);
+		return TagRegistry.create(id, ExtraContainers::getPotionContainer);
 	}
 
 	public static Tag.Identified<SoundEvent> sound(Identifier id) {
-		return TagRegistry.create(id, ExtraTagInternals::getSoundEventContainer);
+		return TagRegistry.create(id, ExtraContainers::getSoundEventContainer);
 	}
 
 	public static Tag.Identified<StatusEffect> statusEffect(Identifier id) {
-		return TagRegistry.create(id, ExtraTagInternals::getStatusEffectContainer);
+		return TagRegistry.create(id, ExtraContainers::getStatusEffectContainer);
 	}
 
 	public static Tag.Identified<VillagerProfession> villagerProfession(Identifier id) {
-		return TagRegistry.create(id, ExtraTagInternals::getVillagerProfessionContainer);
+		return TagRegistry.create(id, ExtraContainers::getVillagerProfessionContainer);
 	}
 
 	public static Tag.Identified<VillagerType> villagerType(Identifier id) {
-		return TagRegistry.create(id, ExtraTagInternals::getVillagerTypeContainer);
+		return TagRegistry.create(id, ExtraContainers::getVillagerTypeContainer);
 	}
 }

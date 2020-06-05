@@ -14,30 +14,17 @@
  * limitations under the License.
  */
 
-package net.fabricmc.fabric.impl.tag;
+package net.fabricmc.fabric.mixin.tag.extra;
 
-import net.minecraft.tag.TagContainer;
-import net.minecraft.util.registry.Registry;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
+
+import net.minecraft.util.registry.SimpleRegistry;
 import net.minecraft.world.dimension.DimensionTracker;
 import net.minecraft.world.dimension.DimensionType;
 
-public final class DimensionTagContainer extends TagContainer<DimensionType> {
-	private boolean bound;
-
-	public DimensionTagContainer() {
-		this(new EmptyRegistry<>());
-	}
-
-	public DimensionTagContainer(DimensionTracker dimensionTracker) {
-		this(dimensionTracker.getRegistry());
-		this.bound = true;
-	}
-
-	private DimensionTagContainer(Registry<DimensionType> registry) {
-		super(registry::getOrEmpty, "tags/dimensions", "dimensions");
-	}
-
-	public boolean isBound() {
-		return this.bound;
-	}
+@Mixin(DimensionTracker.Modifiable.class)
+public interface ModifiableDimensionTrackerAccessor {
+	@Accessor("registry")
+	SimpleRegistry<DimensionType> getRegistry();
 }

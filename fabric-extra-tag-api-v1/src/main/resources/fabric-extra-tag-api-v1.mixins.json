@@ -1,0 +1,18 @@
+{
+  "required": true,
+  "package": "net.fabricmc.fabric.mixin.tag.extra",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MinecraftServerMixin",
+    "ModifiableDimensionTrackerAccessor",
+    "PlayerManagerMixin",
+    "RegistryTagContainerAccessor",
+    "ServerResourceManagerMixin"
+  ],
+  "client": [
+    "client.ClientPlayNetworkHandlerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

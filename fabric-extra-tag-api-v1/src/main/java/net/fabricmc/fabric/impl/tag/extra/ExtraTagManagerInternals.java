@@ -14,17 +14,8 @@
  * limitations under the License.
  */
 
-package net.fabricmc.fabric.mixin.tag;
+package net.fabricmc.fabric.impl.tag.extra;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
-
-import net.minecraft.util.registry.SimpleRegistry;
-import net.minecraft.world.dimension.DimensionTracker;
-import net.minecraft.world.dimension.DimensionType;
-
-@Mixin(DimensionTracker.Modifiable.class)
-public interface ModifiableDimensionTrackerAccessor {
-	@Accessor("registry")
-	SimpleRegistry<DimensionType> getRegistry();
+public interface ExtraTagManagerInternals {
+	ExtraTagManager fabric_getExtraTagsManager();
 }

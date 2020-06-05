@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.fabricmc.fabric.impl.tag;
+package net.fabricmc.fabric.impl.tag.extra.dimension;
 
 import java.util.Collections;
 import java.util.Iterator;
