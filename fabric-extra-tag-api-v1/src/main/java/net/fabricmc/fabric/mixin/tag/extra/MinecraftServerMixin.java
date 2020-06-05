@@ -17,7 +17,6 @@
 package net.fabricmc.fabric.mixin.tag.extra;
 
 import net.fabricmc.fabric.impl.tag.extra.ExtraTagManager;
-import net.fabricmc.fabric.impl.tag.extra.OldExtraTagManager;
 import net.fabricmc.fabric.impl.tag.extra.ExtraTagManagerInternals;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

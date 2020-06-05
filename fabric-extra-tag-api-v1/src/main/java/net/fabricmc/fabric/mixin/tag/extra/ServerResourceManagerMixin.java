@@ -53,12 +53,12 @@ public abstract class ServerResourceManagerMixin implements ExtraTagManagerInter
 	 * Since we implement IdentifiableResourceReloadListener, people can depend on us in their own resouce reload listeners
 	 */
 	@Inject(method = "<init>", at = @At("TAIL"))
-	private void initExtraTagManager(CommandManager.class_5364 registrationEnvironment, int i, CallbackInfo ci) {
+	private void initExtraTagManager(CommandManager.RegistrationEnvironment registrationEnvironment, int i, CallbackInfo ci) {
 		this.extraTagManager.registerListeners(this.resourceManager);
 	}
 
 	// Apply extra tags after vanilla
-	@Inject(method = "method_29475", at = @At("TAIL"))
+	@Inject(method = "loadRegistryTags", at = @At("TAIL"))
 	private void applyExtraTags(CallbackInfo ci) {
 		this.extraTagManager.applyAll();
 	}

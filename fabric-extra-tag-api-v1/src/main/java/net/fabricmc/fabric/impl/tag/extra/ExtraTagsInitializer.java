@@ -19,7 +19,6 @@ package net.fabricmc.fabric.impl.tag.extra;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.fabricmc.fabric.api.event.registry.RegistryAttributeHolder;
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 
 import net.minecraft.util.registry.Registry;
 
@@ -30,10 +29,5 @@ public class ExtraTagsInitializer implements ModInitializer {
 		RegistryAttributeHolder.get(Registry.POTION).addAttribute(RegistryAttribute.SYNCED);
 		RegistryAttributeHolder.get(Registry.BLOCK_ENTITY_TYPE).addAttribute(RegistryAttribute.SYNCED);
 		RegistryAttributeHolder.get(Registry.POINT_OF_INTEREST_TYPE).addAttribute(RegistryAttribute.SYNCED);
-
-		// Register a channel so the client can see if we understand it's requests
-		ServerSidePacketRegistry.INSTANCE.register(ExtraTagNetworking.PACKET_ID, (context, buffer) -> {
-			buffer.release(); // Do nothing, just release
-		});
 	}
 }

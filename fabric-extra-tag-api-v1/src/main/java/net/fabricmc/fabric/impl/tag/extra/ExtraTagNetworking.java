@@ -18,6 +18,7 @@ package net.fabricmc.fabric.impl.tag.extra;
 
 import java.util.List;
 
+import net.minecraft.network.Packet;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
@@ -67,5 +68,9 @@ public final class ExtraTagNetworking {
 		if (ServerSidePacketRegistry.INSTANCE.canPlayerReceive(player, handler.getFabricId())) {
 			ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, handler.createPacket());
 		}
+	}
+
+	public static void sendPacket(Identifier identifier, Packet<?> packet, ServerPlayerEntity player) {
+		ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, packet);
 	}
 }

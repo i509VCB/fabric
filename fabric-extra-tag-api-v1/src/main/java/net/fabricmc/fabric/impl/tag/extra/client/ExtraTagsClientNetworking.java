@@ -59,6 +59,7 @@ public class ExtraTagsClientNetworking implements ClientModInitializer {
 
 	private <T> void registerHandler(Identifier identifier, Supplier<RegistryTagContainer<T>> factory, Consumer<RegistryTagContainer<T>> applicationConsumer, BiConsumer<ExtraTagManager, ExtraTagHandler<T>> loadConsumer) {
 		ClientSidePacketRegistry.INSTANCE.register(identifier, (context, buffer) -> {
+			LOGGER.info("Received sync packet for {} tags", identifier);
 			final MinecraftClient client = (MinecraftClient) context.getTaskQueue();
 			final ClientPlayNetworkHandler networkHandler = client.getNetworkHandler();
 
@@ -67,13 +68,16 @@ public class ExtraTagsClientNetworking implements ClientModInitializer {
 				return;
 			}
 
+			final ExtraTagHandler<T> extraTagHandler = ExtraTagHandler.fromPacket(identifier, factory, applicationConsumer, buffer);
+			final ExtraTagManagerInternals tagManagerInternals = (ExtraTagManagerInternals) networkHandler;
+
 			client.execute(() -> {
-				final ExtraTagHandler<T> extraTagHandler = ExtraTagHandler.fromPacket(identifier, factory, applicationConsumer, buffer);
-				final ExtraTagManagerInternals tagManagerInternals = (ExtraTagManagerInternals) networkHandler;
+				LOGGER.info("Loading {} tags", identifier);
 				loadConsumer.accept(tagManagerInternals.fabric_getExtraTagsManager(), extraTagHandler);
 
 				// Do not apply if we are connected to our integrated server as server already does this for us on resource reloadd
 				if (!networkHandler.getConnection().isLocal()) {
+					LOGGER.info("Applying {} tags since we are remotely connected", identifier);
 					extraTagHandler.apply();
 				}
 			});
