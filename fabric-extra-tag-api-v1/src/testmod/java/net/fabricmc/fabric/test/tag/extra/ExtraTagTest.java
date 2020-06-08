@@ -16,6 +16,8 @@
 
 package net.fabricmc.fabric.test.tag.extra;
 
+import static net.minecraft.command.arguments.DimensionArgumentType.dimension;
+import static net.minecraft.command.arguments.DimensionArgumentType.getDimensionArgument;
 import static net.minecraft.command.arguments.IdentifierArgumentType.getIdentifier;
 import static net.minecraft.command.arguments.IdentifierArgumentType.identifier;
 import static net.minecraft.server.command.CommandManager.argument;
@@ -42,7 +44,11 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 
+import com.mojang.brigadier.suggestion.Suggestions;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.server.ServerStartCallback;
@@ -50,6 +56,7 @@ import net.fabricmc.fabric.api.event.server.ServerTickCallback;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.fabricmc.fabric.api.tag.extra.v1.ExtraTagRegistry;
 import net.fabricmc.fabric.impl.tag.extra.ExtraContainers;
+import net.fabricmc.fabric.impl.tag.extra.dimension.DimensionTagManager;
 
 public class ExtraTagTest implements ModInitializer {
 	private static final DynamicCommandExceptionType INVALID_TAG = new DynamicCommandExceptionType(identifier -> new LiteralText(String.format("Tag %s is not loaded", identifier)));
@@ -99,6 +106,20 @@ public class ExtraTagTest implements ModInitializer {
 		inspect.then(literal("villagerProfession").then(this.createProfessionNode()));
 		inspect.then(literal("villagerType").then(this.createVillagerTypeNode()));
 		// TODO: Dimensions
+		inspect.then(literal("dimension").then(argument("tag", identifier())
+				.suggests((context, builder) -> {
+					//return CommandSource.suggestIdentifiers(context.getSource().get().getKeys(), builder);
+					return Suggestions.empty();
+				})
+				.then(argument("entry", dimension()).suggests((context, builder) -> {
+					return CommandSource.suggestIdentifiers(context.getSource().method_29310().stream().map(RegistryKey::getValue), builder);
+
+				}).executes(context -> {
+					final RegistryKey<World> entry = getDimensionArgument(context, "entry");
+
+
+					return 1;
+				}))));
 
 		return inspect;
 	}

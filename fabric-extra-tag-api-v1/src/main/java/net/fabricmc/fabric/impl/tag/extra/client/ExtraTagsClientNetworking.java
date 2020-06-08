@@ -25,18 +25,23 @@ import org.apache.logging.log4j.Logger;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.tag.RegistryTagContainer;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.dimension.DimensionTracker;
+import net.minecraft.world.dimension.DimensionType;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
+import net.fabricmc.fabric.api.network.PacketContext;
 import net.fabricmc.fabric.impl.tag.extra.ApplicationConsumers;
 import net.fabricmc.fabric.impl.tag.extra.ExtraContainers;
 import net.fabricmc.fabric.impl.tag.extra.ExtraTagHandler;
 import net.fabricmc.fabric.impl.tag.extra.ExtraTagManager;
 import net.fabricmc.fabric.impl.tag.extra.ExtraTagManagerInternals;
+import net.fabricmc.fabric.impl.tag.extra.dimension.DimensionTagManager;
 
 @Environment(EnvType.CLIENT)
 public class ExtraTagsClientNetworking implements ClientModInitializer {
@@ -55,6 +60,9 @@ public class ExtraTagsClientNetworking implements ClientModInitializer {
 		this.registerHandler(ExtraContainers.STATUS_EFFECTS_PACKET, ExtraContainers::createStatusEffectContainer, ApplicationConsumers::applyStatusEffects, ExtraTagManager::setStatusEffects);
 		this.registerHandler(ExtraContainers.VILLAGER_PROFESSION_PACKET, ExtraContainers::createVillagerProfessionContainer, ApplicationConsumers::applyVillagerProfession, ExtraTagManager::setVillagerProfessions);
 		this.registerHandler(ExtraContainers.VILLAGER_TYPE_PACKET, ExtraContainers::createVillagerTypeContainer, ApplicationConsumers::applyVillagerType, ExtraTagManager::setVillagerTypes);
+
+		// Dimensions require some special handling here, and cannot be wholey inlined.
+		ClientSidePacketRegistry.INSTANCE.register(DimensionTagManager.PACKET, this::handleDimensions);
 	}
 
 	private <T> void registerHandler(Identifier identifier, Supplier<RegistryTagContainer<T>> factory, Consumer<RegistryTagContainer<T>> applicationConsumer, BiConsumer<ExtraTagManager, ExtraTagHandler<T>> loadConsumer) {
@@ -81,6 +89,34 @@ public class ExtraTagsClientNetworking implements ClientModInitializer {
 					extraTagHandler.apply();
 				}
 			});
+		});
+	}
+
+	private void handleDimensions(PacketContext context, PacketByteBuf buffer) {
+		LOGGER.info("Received sync packet for dimension tags");
+
+		final MinecraftClient client = (MinecraftClient) context.getTaskQueue();
+		final ClientPlayNetworkHandler networkHandler = client.getNetworkHandler();
+
+		if (networkHandler == null) { // If we don't have a network handler, release and ignore the packet
+			buffer.release();
+			return;
+		}
+
+		final DimensionTracker dimensionTracker = networkHandler.method_29091();
+		final RegistryTagContainer<DimensionType> dimensionTypeContainer = DimensionTagManager.createDimensionTypeContainer(dimensionTracker);
+
+		final ExtraTagHandler<DimensionType> handler = ExtraTagHandler.fromPacket(DimensionTagManager.PACKET, () -> dimensionTypeContainer, ApplicationConsumers::applyDimensions, buffer);
+		final ExtraTagManagerInternals tagManagerInternals = (ExtraTagManagerInternals) networkHandler;
+
+		client.execute(() -> {
+			LOGGER.info("Loading dimension tags");
+			tagManagerInternals.fabric_getDimensionTagManager().setHandler(handler);
+
+			if (!networkHandler.getConnection().isLocal()) {
+				LOGGER.info("Applying dimension tags since we are remotely connected");
+				handler.apply();
+			}
 		});
 	}
 }

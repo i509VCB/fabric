@@ -33,7 +33,7 @@ import net.minecraft.world.poi.PointOfInterestType;
 
 import net.fabricmc.fabric.api.tag.v1.TagRegistry;
 import net.fabricmc.fabric.impl.tag.extra.ExtraContainers;
-import net.fabricmc.fabric.impl.tag.extra.ExtraTagNetworking;
+import net.fabricmc.fabric.impl.tag.extra.dimension.DimensionTagManager;
 
 public final class ExtraTagRegistry {
 	// Please note, all tag entries should be alphabetical.
@@ -49,8 +49,7 @@ public final class ExtraTagRegistry {
 	}
 
 	public static Tag.Identified<DimensionType> dimension(Identifier id) {
-		throw new AssertionError("Implement Me");
-		//return TagRegistry.create(id, ExtraContainers::getDimensionTypeContainer); FIXME: IMPL
+		return TagRegistry.create(id, DimensionTagManager::getDimensionTypeContainer);
 	}
 
 	public static Tag.Identified<Enchantment> enchantment(Identifier id) {

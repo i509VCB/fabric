@@ -18,6 +18,8 @@ package net.fabricmc.fabric.mixin.tag.extra;
 
 import net.fabricmc.fabric.impl.tag.extra.ExtraTagManager;
 import net.fabricmc.fabric.impl.tag.extra.ExtraTagManagerInternals;
+import net.fabricmc.fabric.impl.tag.extra.ServerResourceManagerInternals;
+import net.fabricmc.fabric.impl.tag.extra.dimension.DimensionTagManager;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -28,20 +30,47 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.resource.ReloadableResourceManager;
 import net.minecraft.resource.ServerResourceManager;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
+import net.minecraft.world.dimension.DimensionTracker;
 
 @Mixin(ServerResourceManager.class)
-public abstract class ServerResourceManagerMixin implements ExtraTagManagerInternals {
+public abstract class ServerResourceManagerMixin implements ExtraTagManagerInternals, ServerResourceManagerInternals {
 	@Shadow
 	@Final
 	private ReloadableResourceManager resourceManager;
 
 	@Unique
 	private ExtraTagManager extraTagManager = new ExtraTagManager();
+	@Unique
+	private DimensionTagManager dimensionTagManager;
+	/**
+	 * We need access to the dimension tracker in order to use dimension tags
+	 */
+	@Unique
+	private DimensionTracker dimensionTracker;
 
 	@Override
 	public ExtraTagManager fabric_getExtraTagsManager() {
 		return this.extraTagManager;
+	}
+
+	@Override
+	public DimensionTagManager fabric_getDimensionTagManager() {
+		return this.dimensionTagManager;
+	}
+
+	// Bridge methods to handle dimensions
+
+	@Override
+	public void fabric_setTracker(DimensionTracker tracker) {
+		this.dimensionTracker = tracker;
+	}
+
+	@Override
+	public void fabric_lateInit() {
+		this.dimensionTagManager = new DimensionTagManager(this.dimensionTracker);
+		this.resourceManager.registerListener(this.dimensionTagManager.getHandler());
 	}
 
 	/**
@@ -61,5 +90,6 @@ public abstract class ServerResourceManagerMixin implements ExtraTagManagerInter
 	@Inject(method = "loadRegistryTags", at = @At("TAIL"))
 	private void applyExtraTags(CallbackInfo ci) {
 		this.extraTagManager.applyAll();
+		this.dimensionTagManager.apply();
 	}
 }

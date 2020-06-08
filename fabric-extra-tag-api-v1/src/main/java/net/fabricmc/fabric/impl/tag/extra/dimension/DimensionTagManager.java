@@ -16,33 +16,59 @@
 
 package net.fabricmc.fabric.impl.tag.extra.dimension;
 
-import net.fabricmc.fabric.mixin.tag.extra.ModifiableDimensionTrackerAccessor;
+import net.fabricmc.fabric.impl.tag.extra.ApplicationConsumers;
+import net.fabricmc.fabric.impl.tag.extra.ExtraTagHandler;
 
 import net.minecraft.tag.RegistryTagContainer;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.MutableRegistry;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.dimension.DimensionTracker;
 import net.minecraft.world.dimension.DimensionType;
 
 public final class DimensionTagManager {
+	public static final Identifier PACKET = new Identifier("fabric", "extra_tags/dimensions/v1");
 	static RegistryTagContainer<DimensionType> DIMENSION_TYPE_TAG_CONTAINER = createEmptyDimensionContainer();
 
-	private final RegistryTagContainer<DimensionType> dimensions;
+	private ExtraTagHandler<DimensionType> dimensions;
 
 	public DimensionTagManager(DimensionTracker dimensionTracker) {
-		if (!(dimensionTracker instanceof DimensionTracker.Modifiable)) {
-			throw new IllegalArgumentException("Do not know how to get registry from non-modifiable dimension tracker");
-		}
+		final RegistryTagContainer<DimensionType> dimensionTypeContainer = DimensionTagManager.createDimensionTypeContainer(dimensionTracker);
+		this.dimensions = new ExtraTagHandler<>(PACKET, () -> dimensionTypeContainer, ApplicationConsumers::applyDimensions);
+	}
 
-		this.dimensions = createDimensionTypeContainer(dimensionTracker);
+	public DimensionTagManager() {
+		this.dimensions = new ExtraTagHandler<>(PACKET, DimensionTagManager::createEmptyDimensionContainer, ApplicationConsumers::applyDimensions);
+	}
+
+	public ExtraTagHandler<DimensionType> getHandler() {
+		return this.dimensions;
+	}
+
+	public void setHandler(ExtraTagHandler<DimensionType> dimensions) {
+		this.dimensions = dimensions;
+	}
+
+	public void apply() {
+		this.dimensions.apply();
 	}
 
 	public static RegistryTagContainer<DimensionType> getDimensionTypeContainer() {
 		return DIMENSION_TYPE_TAG_CONTAINER;
 	}
 
-	public static RegistryTagContainer<DimensionType> createDimensionTypeContainer(DimensionTracker dimensionTracker) {
-		return new RegistryTagContainer<>(((ModifiableDimensionTrackerAccessor) dimensionTracker).getRegistry(), "tags/dimensions", "dimensions");
+	public static void setDimensionTypeContainer(RegistryTagContainer<DimensionType> container) {
+		DIMENSION_TYPE_TAG_CONTAINER = container;
 	}
 
+	public static RegistryTagContainer<DimensionType> createDimensionTypeContainer(DimensionTracker dimensionTracker) {
+		final MutableRegistry<DimensionType> dimensionTypes = dimensionTracker.method_29726(Registry.DIMENSION_TYPE_KEY).orElseThrow(() -> new RuntimeException("Expected to find DimensionType registry in registry tracker"));
+		return new RegistryTagContainer<>(dimensionTypes, "tags/dimensions", "dimensions");
+	}
+
+	/**
+	 * Creates an empty tag container. This should be used when not in game.
+	 */
 	public static RegistryTagContainer<DimensionType> createEmptyDimensionContainer() {
 		return new RegistryTagContainer<>(new EmptyRegistry<>(), "tags/dimensions", "dimensions");
 	}
