@@ -14,8 +14,19 @@
  * limitations under the License.
  */
 
-package net.fabricmc.fabric.impl.tag;
+package net.fabricmc.fabric.mixin.tag.legacy;
 
-public interface FabricTagHooks {
-	void fabric_setClearCount(int clearCount);
+import org.spongepowered.asm.mixin.Mixin;
+
+import net.minecraft.tag.Tag;
+
+import net.fabricmc.fabric.api.tag.v1.TagHelper;
+
+@Mixin(Tag.class)
+public interface LegacyTagMixin<T> extends net.fabricmc.fabric.api.tag.FabricTag<T> {
+	@Override
+	default boolean hasBeenReplaced() {
+		// Forward to modern equivalent
+		return TagHelper.hasBeenReplaced((Tag<?>) this);
+	}
 }

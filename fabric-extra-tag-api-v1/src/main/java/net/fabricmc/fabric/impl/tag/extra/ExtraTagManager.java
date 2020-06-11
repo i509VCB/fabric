@@ -129,7 +129,7 @@ public final class ExtraTagManager {
 	public void setVillagerTypes(ExtraTagHandler<VillagerType> villagerTypes) {
 		this.villagerTypes = villagerTypes;
 	}
-	
+
 	public void registerListeners(ReloadableResourceManager resourceManager) {
 		resourceManager.registerListener(this.getBiomes());
 		resourceManager.registerListener(this.getBlockEntities());

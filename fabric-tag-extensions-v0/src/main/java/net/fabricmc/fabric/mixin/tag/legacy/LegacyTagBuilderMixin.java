@@ -18,8 +18,15 @@ package net.fabricmc.fabric.mixin.tag.legacy;
 
 import org.spongepowered.asm.mixin.Mixin;
 
-import net.fabricmc.fabric.api.tag.v1.FabricTag;
+import net.minecraft.tag.Tag;
 
-@Mixin(FabricTag.class)
-public interface LegacyFabricTagMixin<T> extends net.fabricmc.fabric.api.tag.FabricTag<T> {
+import net.fabricmc.fabric.api.tag.v1.TagHelper;
+
+@Mixin(Tag.Builder.class)
+public abstract class LegacyTagBuilderMixin<T> implements net.fabricmc.fabric.api.tag.FabricTagBuilder<T> {
+	@Override
+	public void clearTagEntries() {
+		// Forward to modern equivalent
+		TagHelper.clearEntries((Tag.Builder) (Object) this);
+	}
 }

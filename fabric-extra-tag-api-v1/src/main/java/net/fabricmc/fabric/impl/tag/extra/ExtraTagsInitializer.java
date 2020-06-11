@@ -16,11 +16,11 @@
 
 package net.fabricmc.fabric.impl.tag.extra;
 
+import net.minecraft.util.registry.Registry;
+
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.fabricmc.fabric.api.event.registry.RegistryAttributeHolder;
-
-import net.minecraft.util.registry.Registry;
 
 public class ExtraTagsInitializer implements ModInitializer {
 	@Override

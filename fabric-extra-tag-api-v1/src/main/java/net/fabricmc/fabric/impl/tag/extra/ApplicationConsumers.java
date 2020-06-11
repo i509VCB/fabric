@@ -16,8 +16,6 @@
 
 package net.fabricmc.fabric.impl.tag.extra;
 
-import net.fabricmc.fabric.impl.tag.extra.dimension.DimensionTagManager;
-
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.decoration.painting.PaintingMotive;
@@ -29,10 +27,9 @@ import net.minecraft.tag.RegistryTagContainer;
 import net.minecraft.village.VillagerProfession;
 import net.minecraft.village.VillagerType;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.poi.PointOfInterestType;
 
-public final class ApplicationConsumers {
+final class ApplicationConsumers {
 	public static void applyBiome(RegistryTagContainer<Biome> container) {
 		ExtraContainers.BIOME_TAG_CONTAINER = container;
 	}
@@ -77,7 +74,6 @@ public final class ApplicationConsumers {
 		ExtraContainers.VILLAGER_TYPE_CONTAINER = container;
 	}
 
-	public static void applyDimensions(RegistryTagContainer<DimensionType> container) {
-		DimensionTagManager.setDimensionTypeContainer(container);
+	private ApplicationConsumers() {
 	}
 }

@@ -21,16 +21,15 @@ import org.spongepowered.asm.mixin.Unique;
 
 import net.minecraft.tag.Tag;
 
-import net.fabricmc.fabric.api.tag.FabricTag;
-import net.fabricmc.fabric.impl.tag.extension.FabricTagHooks;
+import net.fabricmc.fabric.impl.tag.FabricTagExtensions;
 
 @Mixin(targets = {"net.minecraft.tag.Tag$1", "net.minecraft.tag.GlobalTagAccessor$CachedTag", "net.minecraft.class_5394"})
-public abstract class MixinTagImpl<T> implements FabricTag<T>, FabricTagHooks, Tag<T> {
+public abstract class MixinTagImpl<T> implements FabricTagExtensions, Tag<T> {
 	@Unique
 	private int fabric_clearCount;
 
 	@Override
-	public boolean hasBeenReplaced() {
+	public boolean fabric_hasBeenReplaced() {
 		return fabric_clearCount > 0;
 	}
 

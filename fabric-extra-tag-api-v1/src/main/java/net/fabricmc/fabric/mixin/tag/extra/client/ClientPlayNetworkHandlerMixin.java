@@ -16,48 +16,29 @@
 
 package net.fabricmc.fabric.mixin.tag.extra.client;
 
-import com.mojang.authlib.GameProfile;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+
+import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.util.registry.RegistryTracker;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.impl.tag.extra.ExtraTagManager;
 import net.fabricmc.fabric.impl.tag.extra.ExtraTagManagerInternals;
-import net.fabricmc.fabric.impl.tag.extra.dimension.DimensionTagManager;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.network.ClientConnection;
-import net.minecraft.world.dimension.DimensionTracker;
 
 @Environment(EnvType.CLIENT)
 @Mixin(ClientPlayNetworkHandler.class)
 public abstract class ClientPlayNetworkHandlerMixin implements ExtraTagManagerInternals {
 	@Shadow
-	private DimensionTracker dimensionTracker;
+	private RegistryTracker dimensionTracker;
 
 	@Unique
 	private ExtraTagManager extraTagManager = new ExtraTagManager();
-	@Unique
-	private DimensionTagManager dimensionTagManager;
 
 	@Override
 	public ExtraTagManager fabric_getExtraTagsManager() {
 		return this.extraTagManager;
-	}
-
-	@Override
-	public DimensionTagManager fabric_getDimensionTagManager() {
-		return this.dimensionTagManager;
-	}
-
-	@Inject(method = "<init>", at = @At("TAIL"))
-	private void initTagManager(MinecraftClient minecraftClient, Screen screen, ClientConnection connection, GameProfile profile, CallbackInfo ci) {
-		this.dimensionTagManager = new DimensionTagManager(this.dimensionTracker);
 	}
 }

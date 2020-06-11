@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package net.fabricmc.fabric.mixin.tag.legacy;
+package net.fabricmc.fabric.impl.tag;
 
-import org.spongepowered.asm.mixin.Mixin;
-
-import net.fabricmc.fabric.api.tag.v1.FabricTagBuilder;
-
-@Mixin(FabricTagBuilder.class)
-public interface LegacyFabricTagBuilderMixin<T> extends net.fabricmc.fabric.api.tag.FabricTagBuilder<T> {
+public interface FabricTagBuilderExtensions {
+	/**
+	 * Clear the contained entries and mark the tag as replaced.
+	 */
+	void fabric_clearTagEntries();
 }

@@ -23,9 +23,7 @@ import net.minecraft.tag.Tag;
 import net.minecraft.tag.TagContainer;
 import net.minecraft.util.Identifier;
 
-import net.fabricmc.fabric.api.tag.v1.FabricTag;
-
-public final class TagDelegate<T> implements Tag.Identified<T>, FabricTag<T>, FabricTagHooks {
+public final class TagDelegate<T> implements Tag.Identified<T>, FabricTagExtensions {
 	private final Identifier id;
 	private final Supplier<TagContainer<T>> containerSupplier;
 	private volatile Target<T> target;
@@ -76,7 +74,7 @@ public final class TagDelegate<T> implements Tag.Identified<T>, FabricTag<T>, Fa
 	}
 
 	@Override
-	public boolean hasBeenReplaced() {
+	public boolean fabric_hasBeenReplaced() {
 		return clearCount > 0;
 	}
 

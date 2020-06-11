@@ -3,8 +3,8 @@
   "package": "net.fabricmc.fabric.mixin.tag.legacy",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "LegacyFabricTagBuilderMixin",
-    "LegacyFabricTagMixin"
+    "LegacyTagBuilderMixin",
+    "LegacyTagMixin"
   ],
   "injectors": {
     "defaultRequire": 1

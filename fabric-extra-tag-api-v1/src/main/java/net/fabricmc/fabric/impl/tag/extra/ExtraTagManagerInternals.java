@@ -16,10 +16,6 @@
 
 package net.fabricmc.fabric.impl.tag.extra;
 
-import net.fabricmc.fabric.impl.tag.extra.dimension.DimensionTagManager;
-
 public interface ExtraTagManagerInternals {
 	ExtraTagManager fabric_getExtraTagsManager();
-
-	DimensionTagManager fabric_getDimensionTagManager();
 }

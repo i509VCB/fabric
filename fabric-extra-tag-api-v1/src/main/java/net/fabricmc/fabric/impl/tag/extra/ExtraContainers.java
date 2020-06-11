@@ -142,4 +142,7 @@ public final class ExtraContainers {
 	public static RegistryTagContainer<VillagerType> createVillagerTypeContainer() {
 		return new RegistryTagContainer<>(Registry.VILLAGER_TYPE, "tags/villager_types", "villager_types");
 	}
+
+	private ExtraContainers() {
+	}
 }

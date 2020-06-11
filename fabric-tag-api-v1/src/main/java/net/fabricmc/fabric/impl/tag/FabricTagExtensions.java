@@ -14,17 +14,10 @@
  * limitations under the License.
  */
 
-package net.fabricmc.fabric.mixin.tag.extra;
+package net.fabricmc.fabric.impl.tag;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
+public interface FabricTagExtensions {
+	void fabric_setClearCount(int clearCount);
 
-import net.minecraft.util.registry.SimpleRegistry;
-import net.minecraft.world.dimension.DimensionTracker;
-import net.minecraft.world.dimension.DimensionType;
-
-@Mixin(DimensionTracker.Modifiable.class)
-public interface ModifiableDimensionTrackerAccessor {
-	@Accessor("registry")
-	SimpleRegistry<DimensionType> getRegistry();
+	boolean fabric_hasBeenReplaced();
 }

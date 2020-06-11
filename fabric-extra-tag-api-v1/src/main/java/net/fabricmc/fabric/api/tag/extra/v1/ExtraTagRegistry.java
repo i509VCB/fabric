@@ -28,12 +28,10 @@ import net.minecraft.util.Identifier;
 import net.minecraft.village.VillagerProfession;
 import net.minecraft.village.VillagerType;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.poi.PointOfInterestType;
 
 import net.fabricmc.fabric.api.tag.v1.TagRegistry;
 import net.fabricmc.fabric.impl.tag.extra.ExtraContainers;
-import net.fabricmc.fabric.impl.tag.extra.dimension.DimensionTagManager;
 
 public final class ExtraTagRegistry {
 	// Please note, all tag entries should be alphabetical.
@@ -46,10 +44,6 @@ public final class ExtraTagRegistry {
 
 	public static Tag.Identified<BlockEntityType<?>> blockEntity(Identifier id) {
 		return TagRegistry.create(id, ExtraContainers::getBlockEntityContainer);
-	}
-
-	public static Tag.Identified<DimensionType> dimension(Identifier id) {
-		return TagRegistry.create(id, DimensionTagManager::getDimensionTypeContainer);
 	}
 
 	public static Tag.Identified<Enchantment> enchantment(Identifier id) {

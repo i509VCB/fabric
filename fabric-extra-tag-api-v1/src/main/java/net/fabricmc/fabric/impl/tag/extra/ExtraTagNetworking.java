@@ -24,7 +24,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
-import net.fabricmc.fabric.impl.tag.extra.dimension.DimensionTagManager;
 
 public final class ExtraTagNetworking {
 	/**
@@ -36,13 +35,13 @@ public final class ExtraTagNetworking {
 	 */
 	public static final int MINOR_VERSION = 0;
 
-	public static void sendPacketsToAll(ExtraTagManager manager, DimensionTagManager dimensionTagManager, List<ServerPlayerEntity> players) {
+	public static void sendPacketsToAll(ExtraTagManager manager, List<ServerPlayerEntity> players) {
 		for (ServerPlayerEntity player : players) {
-			sendPackets(manager, dimensionTagManager, player);
+			sendPackets(manager, player);
 		}
 	}
 
-	public static void sendPackets(ExtraTagManager manager, DimensionTagManager dimensionTagManager, ServerPlayerEntity player) {
+	public static void sendPackets(ExtraTagManager manager, ServerPlayerEntity player) {
 		MinecraftServer server = player.getServer();
 
 		if (server == null) {
@@ -62,7 +61,6 @@ public final class ExtraTagNetworking {
 		sendPacket(manager.getStatusEffects(), player);
 		sendPacket(manager.getVillagerProfessions(), player);
 		sendPacket(manager.getVillagerTypes(), player);
-		sendPacket(dimensionTagManager.getHandler(), player);
 	}
 
 	public static void sendPacket(ExtraTagHandler<?> handler, ServerPlayerEntity player) {
@@ -74,5 +72,8 @@ public final class ExtraTagNetworking {
 
 	public static void sendPacket(Identifier identifier, Packet<?> packet, ServerPlayerEntity player) {
 		ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, packet);
+	}
+
+	private ExtraTagNetworking() {
 	}
 }

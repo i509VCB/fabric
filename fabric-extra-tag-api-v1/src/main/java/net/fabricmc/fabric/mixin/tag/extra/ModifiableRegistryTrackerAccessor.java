@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package net.fabricmc.fabric.api.tag.v1;
+package net.fabricmc.fabric.mixin.tag.extra;
 
-/**
- * Interface implemented by {@link net.minecraft.tag.Tag.Builder} instances when
- * Fabric API is present.
- *
- * @param <T>
- */
-public interface FabricTagBuilder<T> {
-	/**
-	 * Clear the contained entries and mark the tag as replaced.
-	 */
-	void clearTagEntries();
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
+
+import net.minecraft.util.registry.RegistryTracker;
+import net.minecraft.util.registry.SimpleRegistry;
+import net.minecraft.world.dimension.DimensionType;
+
+@Mixin(RegistryTracker.Modifiable.class)
+public interface ModifiableRegistryTrackerAccessor {
+	@Accessor("registry")
+	SimpleRegistry<DimensionType> getRegistry();
 }

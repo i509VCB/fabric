@@ -4,7 +4,7 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MinecraftServerMixin",
-    "ModifiableDimensionTrackerAccessor",
+    "ModifiableRegistryTrackerAccessor",
     "PlayerManagerMixin",
     "RegistryTagContainerAccessor",
     "ServerResourceManagerMixin"

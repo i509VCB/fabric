@@ -18,10 +18,6 @@ package net.fabricmc.fabric.mixin.tag.extra;
 
 import java.util.List;
 
-import net.fabricmc.fabric.impl.tag.extra.ExtraTagManager;
-import net.fabricmc.fabric.impl.tag.extra.ExtraTagManagerInternals;
-import net.fabricmc.fabric.impl.tag.extra.ExtraTagNetworking;
-import net.fabricmc.fabric.impl.tag.extra.dimension.DimensionTagManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -34,6 +30,10 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 
+import net.fabricmc.fabric.impl.tag.extra.ExtraTagManager;
+import net.fabricmc.fabric.impl.tag.extra.ExtraTagManagerInternals;
+import net.fabricmc.fabric.impl.tag.extra.ExtraTagNetworking;
+
 @Mixin(PlayerManager.class)
 public abstract class PlayerManagerMixin {
 	@Shadow
@@ -43,23 +43,17 @@ public abstract class PlayerManagerMixin {
 
 	@Inject(method = "onPlayerConnect", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerManager;sendCommandTree(Lnet/minecraft/server/network/ServerPlayerEntity;)V"))
 	private void syncExtraTagsOnConnect(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
-		ExtraTagNetworking.sendPackets(this.fabric_getExtraTagManager(), this.fabric_getDimensionTagManager(), player);
+		ExtraTagNetworking.sendPackets(this.fabric_getExtraTagManager(), player);
 	}
 
 	@Inject(method = "onDataPacksReloaded", at = @At("TAIL"))
 	private void syncExtraTagsOnReload(CallbackInfo ci) {
-		ExtraTagNetworking.sendPacketsToAll(this.fabric_getExtraTagManager(), this.fabric_getDimensionTagManager(), this.getPlayerList());
+		ExtraTagNetworking.sendPacketsToAll(this.fabric_getExtraTagManager(), this.getPlayerList());
 	}
 
 	@Unique
 	private ExtraTagManager fabric_getExtraTagManager() {
 		ExtraTagManagerInternals manager = (ExtraTagManagerInternals) this.getServer();
 		return manager.fabric_getExtraTagsManager();
-	}
-
-	@Unique
-	private DimensionTagManager fabric_getDimensionTagManager() {
-		ExtraTagManagerInternals manager = (ExtraTagManagerInternals) this.getServer();
-		return manager.fabric_getDimensionTagManager();
 	}
 }
