@@ -19,20 +19,23 @@ package net.fabricmc.fabric.mixin.structure;
 import java.util.Map;
 
 import com.google.common.collect.BiMap;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.minecraft.world.ChunkSerializer;
 
+/**
+ * @deprecated Experimental. May be removed without notice.
+ */
+@Deprecated
 @Mixin(ChunkSerializer.class)
 public abstract class ChunkSerializerMixin {
-	@Shadow
-	@Final
-	private static Logger LOGGER;
+	@Unique
+	private static final Logger LOGGER = LogManager.getLogger("FabricStructures");
 
 	/**
 	 * @author i509VCB
@@ -40,11 +43,13 @@ public abstract class ChunkSerializerMixin {
 	 */
 	@Redirect(method = "readStructureReferences", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/BiMap;get(Ljava/lang/Object;)Ljava/lang/Object;"))
 	private static <K, V> V emitMissingStructureMessage(BiMap<K, V> map, K key) {
-		if (!map.containsKey(key)) {
-			LOGGER.error("Found missing structure reference {}! Ignoring this structure.", key);
+		final V value = map.get(key);
+
+		if (value == null) {
+			LOGGER.error("Found missing structure reference \"{}\"! Ignoring this structure.", key);
 		}
 
-		return map.get(key);
+		return value;
 	}
 
 	/**
