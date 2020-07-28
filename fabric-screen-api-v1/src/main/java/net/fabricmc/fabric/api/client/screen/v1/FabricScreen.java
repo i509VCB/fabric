@@ -19,6 +19,7 @@ package net.fabricmc.fabric.api.client.screen.v1;
 import java.util.List;
 
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.AbstractButtonWidget;
 import net.minecraft.client.render.item.ItemRenderer;
@@ -48,6 +49,18 @@ public interface FabricScreen {
 	 * @return a list of all the buttons
 	 */
 	List<AbstractButtonWidget> getButtons();
+
+	/**
+	 * Gets all the screen's child elements.
+	 *
+	 * <p>The child elements of a screen also includes all {@link AbstractButtonWidget buttons}.
+	 * {@link FabricScreen#getButtons()} should be used to add or remove buttons.
+	 *
+	 * @return a list of all the child elements.
+	 * @throws UnsupportedOperationException if any buttons are removed from the list.
+	 * @see FabricScreen#getButtons()
+	 */
+	List<Element> getChildElements();
 
 	/**
 	 * Gets the screen's item renderer.

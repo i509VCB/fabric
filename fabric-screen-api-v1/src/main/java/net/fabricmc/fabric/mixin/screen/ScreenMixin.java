@@ -38,6 +38,7 @@ import net.fabricmc.fabric.api.client.screen.v1.FabricScreen;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.impl.client.screen.ButtonList;
+import net.fabricmc.fabric.impl.client.screen.ElementList;
 import net.fabricmc.fabric.impl.client.screen.ScreenEventFactory;
 
 @Mixin(Screen.class)
@@ -55,6 +56,8 @@ public abstract class ScreenMixin implements FabricScreen {
 
 	@Unique
 	private ButtonList<AbstractButtonWidget> fabricButtons;
+	@Unique
+	private List<Element> fabricElements;
 	@Unique
 	private Event<ScreenEvents.BeforeTick> beforeTickEvent;
 	@Unique
@@ -85,6 +88,16 @@ public abstract class ScreenMixin implements FabricScreen {
 		}
 
 		return this.fabricButtons;
+	}
+
+	@Override
+	public List<Element> getChildElements() {
+		// Lazy init to make the list access safe after Screen#init
+		if (this.fabricElements == null) {
+			this.fabricElements = new ElementList<>(this.children);
+		}
+
+		return this.fabricElements;
 	}
 
 	@Override
