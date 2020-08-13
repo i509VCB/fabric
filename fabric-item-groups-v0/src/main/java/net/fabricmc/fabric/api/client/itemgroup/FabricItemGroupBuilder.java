@@ -22,18 +22,14 @@ import java.util.function.Supplier;
 
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.Identifier;
 
-import net.fabricmc.fabric.impl.item.group.ItemGroupExtensions;
+import net.fabricmc.fabric.api.item.group.v1.ItemGroupBuilder;
 
 public final class FabricItemGroupBuilder {
-	private Identifier identifier;
-	private Supplier<ItemStack> stackSupplier = () -> ItemStack.EMPTY;
-	private Consumer<List<ItemStack>> stacksForDisplay;
+	private final ItemGroupBuilder delegate = ItemGroupBuilder.create();
 
-	private FabricItemGroupBuilder(Identifier identifier) {
-		this.identifier = identifier;
+	private FabricItemGroupBuilder() {
 	}
 
 	/**
@@ -43,7 +39,9 @@ public final class FabricItemGroupBuilder {
 	 * @return a FabricItemGroupBuilder
 	 */
 	public static FabricItemGroupBuilder create(Identifier identifier) {
-		return new FabricItemGroupBuilder(identifier);
+		final FabricItemGroupBuilder builder = new FabricItemGroupBuilder();
+		builder.delegate.id(identifier);
+		return builder;
 	}
 
 	/**
@@ -53,7 +51,7 @@ public final class FabricItemGroupBuilder {
 	 * @return a reference to the FabricItemGroupBuilder
 	 */
 	public FabricItemGroupBuilder icon(Supplier<ItemStack> stackSupplier) {
-		this.stackSupplier = stackSupplier;
+		this.delegate.icon(stackSupplier);
 		return this;
 	}
 
@@ -76,7 +74,7 @@ public final class FabricItemGroupBuilder {
 	 * @return a reference to the FabricItemGroupBuilder
 	 */
 	public FabricItemGroupBuilder appendItems(Consumer<List<ItemStack>> stacksForDisplay) {
-		this.stacksForDisplay = stacksForDisplay;
+		this.delegate.appendItems(stacksForDisplay);
 		return this;
 	}
 
@@ -88,7 +86,7 @@ public final class FabricItemGroupBuilder {
 	 * @return An instance of the built ItemGroup
 	 */
 	public static ItemGroup build(Identifier identifier, Supplier<ItemStack> stackSupplier) {
-		return new FabricItemGroupBuilder(identifier).icon(stackSupplier).build();
+		return ItemGroupBuilder.createGroup(identifier, stackSupplier);
 	}
 
 	/**
@@ -97,22 +95,6 @@ public final class FabricItemGroupBuilder {
 	 * @return An instance of the built ItemGroup
 	 */
 	public ItemGroup build() {
-		((ItemGroupExtensions) ItemGroup.BUILDING_BLOCKS).fabric_expandArray();
-		return new ItemGroup(ItemGroup.GROUPS.length - 1, String.format("%s.%s", identifier.getNamespace(), identifier.getPath())) {
-			@Override
-			public ItemStack createIcon() {
-				return stackSupplier.get();
-			}
-
-			@Override
-			public void appendStacks(DefaultedList<ItemStack> stacks) {
-				if (stacksForDisplay != null) {
-					stacksForDisplay.accept(stacks);
-					return;
-				}
-
-				super.appendStacks(stacks);
-			}
-		};
+		return this.delegate.buildAndRegister();
 	}
 }
