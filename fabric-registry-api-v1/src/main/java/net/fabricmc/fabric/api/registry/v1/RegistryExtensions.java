@@ -16,7 +16,6 @@
 
 package net.fabricmc.fabric.api.registry.v1;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import net.minecraft.util.Identifier;
@@ -59,6 +58,8 @@ public interface RegistryExtensions<T> {
 
 	Event<RegistryEvents.EntryRemoved<T>> getEntryRemovedEvent();
 
+	// TODO: Is delegated instance required for anything?
 	interface Delegated<T> extends RegistryExtensions<T> {
+		Event<RegistryEvents.CreateDynamic<T>>
 	}
 }

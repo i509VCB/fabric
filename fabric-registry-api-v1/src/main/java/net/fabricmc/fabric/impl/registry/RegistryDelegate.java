@@ -36,7 +36,9 @@ public final class RegistryDelegate<T> implements RegistryExtensions.Delegated<T
 	private Event<RegistryEvents.EntryAdded<T>> entryAddedEvent = RegistryEventFactory.createAddedEvent();
 	private Event<RegistryEvents.EntryRemoved<T>> entryRemovedEvent = RegistryEventFactory.createRemovedEvent();
 	/**
-	 * The currently bound, live registry. Every registry when constructed is given it's own delegate,
+	 * The currently bound, live registry.
+	 * Every registry when constructed is given it's own delegate.
+	 * If the registry is a dynamic registry, then
 	 */
 	/* @Nullable */
 	private Registry<T> boundRegistry;
@@ -44,6 +46,10 @@ public final class RegistryDelegate<T> implements RegistryExtensions.Delegated<T
 	public static <T> RegistryDelegate<T> getOrCreateDelegate(RegistryKey<Registry<T>> key) {
 		//noinspection unchecked,rawtypes
 		return RegistryDelegate.DELEGATES.computeIfAbsent((RegistryKey) key, k -> new RegistryDelegate<T>((RegistryKey) k));
+	}
+
+	public static boolean isDynamicRegistry(RegistryKey<Registry<?>> key) {
+
 	}
 
 	private RegistryDelegate(RegistryKey<Registry<T>> key) {
