@@ -16,19 +16,47 @@
 
 package net.fabricmc.fabric.api.event.registry;
 
+import net.minecraft.util.Identifier;
+
+import net.fabricmc.fabric.api.registry.v1.FabricRegistryAttributes;
+
+@Deprecated
 public enum RegistryAttribute {
 	/**
 	 * Registry will be saved to disk when modded.
 	 */
-	PERSISTED,
+	PERSISTED {
+		@Override
+		public Identifier getNewAttributeId() {
+			return null; // TODO
+		}
+	},
 
 	/**
 	 * Registry will be synced to the client when modded.
 	 */
-	SYNCED,
+	SYNCED {
+		@Override
+		public Identifier getNewAttributeId() {
+			return null; // TODO
+		}
+	},
 
 	/**
 	 * Registry has been modded.
 	 */
-	MODDED
+	MODDED {
+		@Override
+		public Identifier getNewAttributeId() {
+			return FabricRegistryAttributes.MODDED;
+		}
+	};
+
+	/**
+	 * Gets the id of this registry attribute.
+	 * For use in new registry api.
+	 *
+	 * @return the id that represents this attribute
+	 */
+	public abstract Identifier getNewAttributeId();
 }

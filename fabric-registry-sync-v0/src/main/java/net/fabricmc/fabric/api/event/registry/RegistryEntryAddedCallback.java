@@ -22,6 +22,7 @@ import net.minecraft.util.registry.Registry;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.impl.registry.sync.ListenableRegistry;
 
+@Deprecated
 @FunctionalInterface
 public interface RegistryEntryAddedCallback<T> {
 	void onEntryAdded(int rawId, Identifier id, T object);

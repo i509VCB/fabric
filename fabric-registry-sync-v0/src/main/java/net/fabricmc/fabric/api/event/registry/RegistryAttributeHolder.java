@@ -18,6 +18,7 @@ package net.fabricmc.fabric.api.event.registry;
 
 import net.minecraft.util.registry.Registry;
 
+@Deprecated
 public interface RegistryAttributeHolder {
 	static RegistryAttributeHolder get(Registry<?> registry) {
 		return (RegistryAttributeHolder) registry;

@@ -21,7 +21,6 @@ import java.util.List;
 
 import com.mojang.serialization.Lifecycle;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -34,14 +33,10 @@ import net.minecraft.util.registry.RegistryKey;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.registry.v1.RegistryEvents;
 import net.fabricmc.fabric.api.registry.v1.RegistryExtensions;
-import net.fabricmc.fabric.impl.registry.RegistryDelegate;
 import net.fabricmc.fabric.impl.registry.RegistryEventFactory;
 
 @Mixin(Registry.class)
 abstract class RegistryMixin<T> implements RegistryExtensions<T> {
-	@Shadow
-	public abstract RegistryKey<? extends Registry<T>> getKey();
-
 	@Unique
 	private Event<RegistryEvents.EntryAdded<T>> entryAddedEvent;
 	@Unique
@@ -49,19 +44,11 @@ abstract class RegistryMixin<T> implements RegistryExtensions<T> {
 	@Unique
 	private List<Identifier> attributes;
 
-	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void onInit(RegistryKey<? extends Registry<T>> registryKey, Lifecycle lifecycle, CallbackInfo ci) {
 		this.entryAddedEvent = RegistryEventFactory.createAddedEvent();
 		this.entryRemovedEvent = RegistryEventFactory.createRemovedEvent();
 		this.attributes = new ArrayList<>();
-
-		// Verify this is not a dynamic registry. We attach attributes to dynamic registries later.
-		if (!DynamicRegistryManagerAccessor.getDynamicRegistriesInfo().containsKey(this.getKey())) {
-			// We are not using a dynamic registry; create the delegate and bind.
-			RegistryDelegate<T> delegate = (RegistryDelegate<T>) RegistryDelegate.getOrCreateDelegate((RegistryKey) this.getKey());
-			delegate.bindTo((Registry<T>) (Object) this);
-		}
 	}
 
 	@Override

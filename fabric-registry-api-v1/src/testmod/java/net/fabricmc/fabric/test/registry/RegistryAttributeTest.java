@@ -26,11 +26,6 @@ import net.fabricmc.fabric.api.registry.v1.RegistryExtensions;
 public final class RegistryAttributeTest implements ModInitializer {
 	@Override
 	public void onInitialize() {
-		RegistryExtensions.Delegated<Biome> extensions = RegistryExtensions.getExtensions(Registry.BIOME_KEY);
-		extensions.getEntryAddedEvent().register((rawId, id, object) -> {
-			System.out.println(id);
-		});
-
 		RegistryExtensions<BlockEntityType<?>> blockEntityRegistry = RegistryExtensions.getExtensions(Registry.BLOCK_ENTITY_TYPE);
 		blockEntityRegistry.addAttribute(TestAttributeTypes.TEST);
 	}

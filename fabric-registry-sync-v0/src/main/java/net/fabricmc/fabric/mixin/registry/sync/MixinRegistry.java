@@ -16,36 +16,54 @@
 
 package net.fabricmc.fabric.mixin.registry.sync;
 
-import java.util.EnumSet;
 import java.util.Set;
 
+import com.mojang.serialization.Lifecycle;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.fabricmc.fabric.api.event.registry.RegistryAttributeHolder;
+import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
+import net.fabricmc.fabric.api.event.registry.RegistryEntryRemovedCallback;
+import net.fabricmc.fabric.api.registry.v1.RegistryExtensions;
 import net.fabricmc.fabric.impl.registry.sync.FabricRegistry;
 
-@Mixin(Registry.class)
+// Must be lower priority (higher number) than v1 or we may NPE when reimplementing old events
+@Mixin(value = Registry.class, priority = 1001)
 public abstract class MixinRegistry<T> implements RegistryAttributeHolder, FabricRegistry {
 	@Unique
-	private final EnumSet<RegistryAttribute> attributes = EnumSet.noneOf(RegistryAttribute.class);
+	private RegistryExtensions<T> newExtensions;
+
+	@SuppressWarnings({"unchecked", "ConstantConditions"})
+	@Inject(method = "<init>", at = @At("TAIL"))
+	private void registerOldEvents(RegistryKey<? extends Registry<T>> registryKey, Lifecycle lifecycle, CallbackInfo ci) {
+		this.newExtensions = (RegistryExtensions<T>) this;
+		this.newExtensions.getEntryAddedEvent().register((rawId, id, key, object) -> RegistryEntryAddedCallback.event((Registry<T>) (Object) this).invoker().onEntryAdded(rawId, id, object));
+		this.newExtensions.getEntryRemovedEvent().register((rawId, id, key, object) -> RegistryEntryRemovedCallback.event((Registry<T>) (Object) this).invoker().onEntryRemoved(rawId, id, object));
+	}
 
 	@Override
 	public RegistryAttributeHolder addAttribute(RegistryAttribute attribute) {
-		attributes.add(attribute);
+		this.newExtensions.addAttribute(attribute.getNewAttributeId());
 		return this;
 	}
 
 	@Override
 	public boolean hasAttribute(RegistryAttribute attribute) {
-		return attributes.contains(attribute);
+		return this.newExtensions.hasAttribute(attribute.getNewAttributeId());
 	}
 
 	@Override
 	public void build(Set<RegistryAttribute> attributes) {
-		this.attributes.addAll(attributes);
+		for (RegistryAttribute attribute : attributes) {
+			this.newExtensions.addAttribute(attribute.getNewAttributeId());
+		}
 	}
 }

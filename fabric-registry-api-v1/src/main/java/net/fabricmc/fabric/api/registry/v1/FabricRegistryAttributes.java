@@ -16,10 +16,18 @@
 
 package net.fabricmc.fabric.api.registry.v1;
 
+import net.minecraft.util.Identifier;
+
 /**
  * An enumeration of all built-in registry attributes fabric's registry api defines.
  */
 public final class FabricRegistryAttributes {
+	/**
+	 * Specifies that a registry has been modded.
+	 * This attribute is applied when a registry has any new entries added after bootstrap, or new entries are not in the Minecraft namespace.
+	 */
+	public static final Identifier MODDED = new Identifier("fabric-registry-api-v1", "modded");
+
 	private FabricRegistryAttributes() {
 	}
 }

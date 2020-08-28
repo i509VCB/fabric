@@ -16,14 +16,10 @@
 
 package net.fabricmc.fabric.api.registry.v1;
 
-import java.util.function.Consumer;
-
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 
 import net.fabricmc.fabric.api.event.Event;
-import net.fabricmc.fabric.impl.registry.RegistryDelegate;
 
 public interface RegistryExtensions<T> {
 	/**
@@ -38,18 +34,6 @@ public interface RegistryExtensions<T> {
 		return ((RegistryExtensions<T>) registry);
 	}
 
-	/**
-	 * Provides access to extensions applied to a registry, specifically by registry key.
-	 * Any modifications using this method will be delegated to the registries of the same registry key in the when loaded.
-	 *
-	 * @param key the registry key of the registry
-	 * @param <T> the type of object stored in the registry
-	 * @return TODO
-	 */
-	static <T> RegistryExtensions.Delegated<T> getExtensions(RegistryKey<Registry<T>> key) {
-		return RegistryDelegate.getOrCreateDelegate(key);
-	}
-
 	void addAttribute(Identifier attribute);
 
 	boolean hasAttribute(Identifier attribute);
@@ -57,9 +41,4 @@ public interface RegistryExtensions<T> {
 	Event<RegistryEvents.EntryAdded<T>> getEntryAddedEvent();
 
 	Event<RegistryEvents.EntryRemoved<T>> getEntryRemovedEvent();
-
-	// TODO: Is delegated instance required for anything?
-	interface Delegated<T> extends RegistryExtensions<T> {
-		Event<RegistryEvents.CreateDynamic<T>>
-	}
 }

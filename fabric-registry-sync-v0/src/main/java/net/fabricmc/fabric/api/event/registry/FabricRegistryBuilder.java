@@ -35,8 +35,8 @@ import net.fabricmc.fabric.mixin.registry.sync.AccessorRegistry;
  * <pre>
  * {@code
  *  SimpleRegistry<String> registry = FabricRegistryBuilder.createSimple(String.class, new Identifier("registry_sync", "fabric_registry"))
- * 													.attribute(RegistryAttribute.SYNCED)
- * 													.buildAndRegister();
+ * 	.attribute(RegistryAttribute.SYNCED)
+ * 	.buildAndRegister();
  * 	}
  * </pre>
  *

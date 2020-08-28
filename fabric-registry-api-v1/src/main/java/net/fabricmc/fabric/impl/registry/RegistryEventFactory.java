@@ -17,6 +17,7 @@
 package net.fabricmc.fabric.impl.registry;
 
 import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
 import net.fabricmc.fabric.api.registry.v1.RegistryEvents;
 
 public final class RegistryEventFactory {
@@ -24,10 +25,18 @@ public final class RegistryEventFactory {
 	}
 
 	public static <T> Event<RegistryEvents.EntryAdded<T>> createAddedEvent() {
-		return null;
+		return EventFactory.createArrayBacked(RegistryEvents.EntryAdded.class, callbacks -> (rawId, id, key, object) -> {
+			for (RegistryEvents.EntryAdded<T> callback : callbacks) {
+				callback.onEntryAdded(rawId, id, key, object);
+			}
+		});
 	}
 
 	public static <T> Event<RegistryEvents.EntryRemoved<T>> createRemovedEvent() {
-		return null;
+		return EventFactory.createArrayBacked(RegistryEvents.EntryRemoved.class, callbacks -> (rawId, id, key, object) -> {
+			for (RegistryEvents.EntryRemoved<T> callback : callbacks) {
+				callback.onEntryRemoved(rawId, id, key, object);
+			}
+		});
 	}
 }

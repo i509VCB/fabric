@@ -18,18 +18,15 @@ package net.fabricmc.fabric.api.registry.v1;
 
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 
 public final class RegistryEvents {
 	public interface EntryAdded<T> {
-		void onEntryAdded(int rawId, Identifier id, T object);
+		void onEntryAdded(int rawId, Identifier id, RegistryKey<T> key, T object);
 	}
 
 	public interface EntryRemoved<T> {
-		void onEntryRemoved(int rawId, Identifier id, T object);
-	}
-
-	public interface CreateDynamic<T> {
-		void onCreateDynamicRegistry(Registry<T> registry);
+		void onEntryRemoved(int rawId, Identifier id, RegistryKey<T> key, T object);
 	}
 
 	private RegistryEvents() {
