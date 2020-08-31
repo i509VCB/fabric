@@ -1,0 +1,7 @@
+archivesBaseName = "fabric-resource-api-v1"
+version = getSubprojectVersion(project, "1.0.0")
+
+dependencies {
+	// Compile only for javadoc
+	compileOnly project(path: ':fabric-lifecycle-events-v1', configuration: 'dev')
+}
