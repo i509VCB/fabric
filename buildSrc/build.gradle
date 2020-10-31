@@ -1,0 +1,12 @@
+repositories {
+	gradlePluginPortal()
+	maven {
+		name = 'Fabric'
+		url = 'https://maven.fabricmc.net/'
+	}
+}
+
+dependencies {
+	implementation "com.diffplug.spotless:spotless-plugin-gradle:5.7.0"
+	implementation "net.fabricmc:access-widener:1.0.0"
+}

@@ -13,6 +13,7 @@ plugins {
 	id "net.minecrell.licenser" version "0.4.1"
 	id "org.ajoberstar.grgit" version "3.1.1"
 	id "com.matthewprenger.cursegradle" version "1.4.0"
+	id "com.diffplug.spotless"
 }
 
 def ENV = System.getenv()
@@ -59,6 +60,7 @@ def getBranch() {
 
 allprojects {
 	apply plugin: "checkstyle"
+	apply plugin: "com.diffplug.spotless"
 	apply plugin: "maven-publish"
 	apply plugin: "fabric-loom"
 	apply plugin: "net.minecrell.licenser"
@@ -134,6 +136,42 @@ allprojects {
 	checkstyle {
 		configFile = rootProject.file("checkstyle.xml")
 		toolVersion = "8.31"
+	}
+
+	spotless {
+		java {
+			it.importOrderFile rootProject.file("/codeformat/fabric-api.importorder")
+			it.eclipse().configFile rootProject.file("/codeformat/eclipse_formatter.xml")
+
+			it.removeUnusedImports()
+
+			it.trimTrailingWhitespace()
+			it.indentWithTabs()
+			it.endWithNewline()
+
+			it.encoding "UTF-8" // UTF-8 encoding
+		}
+
+		format "json", {
+			it.target "*.json"
+
+			it.trimTrailingWhitespace()
+			it.indentWithSpaces(2) // Indent json with spaces
+			it.endWithNewline()
+		}
+
+		format "misc", {
+			it.target "*.gradle", "*.md", ".gitignore", "gradle.properties"
+
+			it.trimTrailingWhitespace() // No trailing whitespace
+			it.indentWithTabs() // Tabs
+			it.endWithNewline() // End with newline
+		}
+
+		format "accesswidener", {
+			it.target "*.accesswidener"
+			//it.addStep(new AccessWidenerStep())
+		}
 	}
 }
 
