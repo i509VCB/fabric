@@ -141,7 +141,7 @@ allprojects {
 	spotless {
 		java {
 			it.importOrderFile rootProject.file("codeformat/fabric-api.importorder")
-			it.eclipse().configFile rootProject.file("codeformat/eclipse-formatter.xml")
+			//it.eclipse().configFile rootProject.file("codeformat/eclipse-formatter.xml")
 
 			it.removeUnusedImports()
 
