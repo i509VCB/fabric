@@ -139,7 +139,7 @@ allprojects {
 	}
 
 	spotless {
-		java {
+		/*java {
 			it.importOrderFile rootProject.file("codeformat/fabric-api.importorder")
 			//it.eclipse().configFile rootProject.file("codeformat/eclipse-formatter.xml")
 
@@ -150,7 +150,7 @@ allprojects {
 			it.endWithNewline()
 
 			it.encoding "UTF-8" // UTF-8 encoding
-		}
+		}*/
 
 		format "json", {
 			it.target "*.json"
