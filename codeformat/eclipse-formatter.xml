@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <profiles version="17">
-    <profile kind="CodeFormatterProfile" name="m" version="17">
+    <profile kind="CodeFormatterProfile" name="Fabric API" version="17">
         <setting id="org.eclipse.jdt.core.formatter.insert_space_after_ellipsis" value="insert"/>
         <setting id="org.eclipse.jdt.core.formatter.insert_space_after_comma_in_enum_declarations" value="insert"/>
         <setting id="org.eclipse.jdt.core.formatter.insert_space_before_comma_in_allocation_expression" value="do not insert"/>
@@ -188,7 +188,7 @@
         <setting id="org.eclipse.jdt.core.formatter.insert_space_before_arrow_in_switch_default" value="insert"/>
         <setting id="org.eclipse.jdt.core.formatter.insert_space_before_closing_paren_in_constructor_declaration" value="do not insert"/>
         <setting id="org.eclipse.jdt.core.formatter.alignment_for_conditional_expression_chain" value="0"/>
-        <setting id="org.eclipse.jdt.core.formatter.comment.format_header" value="false"/>
+        <setting id="org.eclipse.jdt.core.formatter.comment.format_header" value="false"/> <!--Changed-->
         <setting id="org.eclipse.jdt.core.formatter.alignment_for_arguments_in_allocation_expression" value="16"/>
         <setting id="org.eclipse.jdt.core.formatter.insert_space_before_additive_operator" value="insert"/>
         <setting id="org.eclipse.jdt.core.formatter.insert_space_after_opening_paren_in_method_invocation" value="do not insert"/>
@@ -363,5 +363,7 @@
         <setting id="org.eclipse.jdt.core.formatter.lineSplit" value="160"/>
         <setting id="org.eclipse.jdt.core.formatter.insert_space_after_opening_paren_in_annotation" value="do not insert"/>
         <setting id="org.eclipse.jdt.core.formatter.insert_space_before_opening_paren_in_switch" value="insert"/>
+        <!--Do not insert a newline when dealing with different tags-->
+        <setting id="org.eclipse.jdt.core.formatter.comment.insert_new_line_between_different_tags" value="do not insert"/>
     </profile>
 </profiles>
