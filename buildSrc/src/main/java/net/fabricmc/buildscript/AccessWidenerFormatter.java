@@ -145,7 +145,6 @@ public final class AccessWidenerFormatter {
 		}
 
 		if (output != null) {
-			System.out.println(output.toString());
 			return output.toString();
 		}
 
