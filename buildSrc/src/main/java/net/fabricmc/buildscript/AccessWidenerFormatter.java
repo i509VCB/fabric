@@ -30,7 +30,7 @@ public final class AccessWidenerFormatter {
 			new AccessWidenerReader(new AccessWidener()).read(reader);
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new RuntimeException("Unable to format access widener at %s since it is invalid");
+			throw new Exception("Unable to format access widener at %s since it is invalid");
 		}
 
 		final String[] lines = rawUnix.split("\n");
@@ -48,7 +48,7 @@ public final class AccessWidenerFormatter {
 			// Preserve header
 			if (line.startsWith("accessWidener")) {
 				if (!line.startsWith("accessWidener\tv1")) {
-					throw new RuntimeException("Cannot format unsupported version access widener");
+					throw new Exception("Cannot format unsupported version access widener");
 				}
 
 				final String[] parts = line.split("\\s+");
@@ -96,7 +96,7 @@ public final class AccessWidenerFormatter {
 
 					break;
 				default:
-					throw new RuntimeException(String.format("Invalid class access modifier \"%s\"", parts[0]));
+					throw new Exception(String.format("Invalid class access modifier \"%s\"", parts[0]));
 				}
 
 				break;
@@ -115,7 +115,7 @@ public final class AccessWidenerFormatter {
 						outputLines.add(reformat(parts, parts[1], indent, comment));
 						break;
 					default:
-						throw new RuntimeException(String.format("Invalid type for accessible modifier \"%s\"", parts[1]));
+						throw new Exception(String.format("Invalid type for accessible modifier \"%s\"", parts[1]));
 					}
 
 					break;
@@ -125,7 +125,7 @@ public final class AccessWidenerFormatter {
 
 				break;
 			default:
-				throw new RuntimeException("Invalid access widener entry");
+				throw new Exception("Invalid access widener entry");
 			}
 		}
 
