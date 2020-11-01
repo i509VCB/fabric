@@ -28,6 +28,7 @@ class Globals {
 version = Globals.baseVersion + "+" + (ENV.BUILD_NUMBER ? ("build." + ENV.BUILD_NUMBER) : "local") + "-" + getBranch()
 logger.lifecycle("Building Fabric: " + version)
 
+import net.fabricmc.buildscript.AccessWidenerFormatter
 import org.apache.commons.codec.digest.DigestUtils
 
 def getSubprojectVersion(project, version) {
@@ -168,11 +169,10 @@ allprojects {
 			it.endWithNewline() // End with newline
 		}
 
-		/*
 		format "accesswidener", {
 			it.target "*.accesswidener"
-			//it.addStep(new AccessWidenerStep())
-		}*/
+			it.addStep AccessWidenerFormatter.create()
+		}
 	}
 }
 

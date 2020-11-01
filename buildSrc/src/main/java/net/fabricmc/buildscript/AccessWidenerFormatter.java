@@ -1,7 +1,7 @@
 package net.fabricmc.buildscript;
 
 import java.io.BufferedReader;
-import java.io.File;
+import java.io.Serializable;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,41 +12,31 @@ import com.diffplug.spotless.FormatterStep;
 import net.fabricmc.accesswidener.AccessWidener;
 import net.fabricmc.accesswidener.AccessWidenerReader;
 
-public final class AccessWidenerFormatter implements FormatterStep {
-	private final FormatOptions format;
-
-	public static AccessWidenerFormatter create() {
-		return new AccessWidenerFormatter(FormatOptions.create());
+public final class AccessWidenerFormatter {
+	public static FormatterStep create() {
+		return create(FormatOptions.create());
 	}
 
-	public static AccessWidenerFormatter create(FormatOptions format) {
+	public static FormatterStep create(FormatOptions format) {
 		Objects.requireNonNull(format, "Format cannot be null");
-		return new AccessWidenerFormatter(format);
+
+		return FormatterStep.createNeverUpToDate("access-widener", (rawUnix) -> Objects.requireNonNull(AccessWidenerFormatter.format(format, rawUnix)));
 	}
 
-	private AccessWidenerFormatter(FormatOptions format) {
-		this.format = format;
-	}
-
-	@Override
-	public String getName() {
-		return "access-widener";
-	}
-
-	@Override
-	public String format(String rawUnix, File file) throws Exception {
+	private static String format(FormatOptions format, String rawUnix) throws Exception {
 		// Verify the access widener file is actually usable.
 		// We do not format invalid files.
 		try (final BufferedReader reader = new BufferedReader(new StringReader(rawUnix))) {
 			new AccessWidenerReader(new AccessWidener()).read(reader);
 		} catch (Exception e) {
-			throw new RuntimeException(String.format("Unable to format access widener at %s since it is invalid", file), e);
+			e.printStackTrace();
+			throw new RuntimeException("Unable to format access widener at %s since it is invalid");
 		}
 
 		final String[] lines = rawUnix.split("\n");
 		// Allocate initial capacity of original file
 		final List<String> outputLines = new ArrayList<>(lines.length);
-		final String indent = this.createIndent();
+		final String indent = createIndent(format);
 
 		for (String line : lines) {
 			// Preserve empty lines
@@ -61,7 +51,10 @@ public final class AccessWidenerFormatter implements FormatterStep {
 					throw new RuntimeException("Cannot format unsupported version access widener");
 				}
 
-				outputLines.add(line);
+				final String[] parts = line.split("\\s+");
+
+				// reformat preserving namespace
+				outputLines.add(String.format("accessWidener%sv1%s%s", indent, indent, parts[2]));
 				continue;
 			}
 
@@ -95,7 +88,7 @@ public final class AccessWidenerFormatter implements FormatterStep {
 
 					// End of line comments
 					if (comment != null) {
-						reformatted += this.createIndent();
+						reformatted += indent;
 						reformatted += comment;
 					}
 
@@ -110,19 +103,22 @@ public final class AccessWidenerFormatter implements FormatterStep {
 			case 5:
 				switch (parts[0]) {
 				case "mutable": // Always a field
-					outputLines.add(this.reformat(parts, "field", indent, comment));
+					outputLines.add(reformat(parts, "field", indent, comment));
 					break;
 				case "extendable": // Always a method
-					outputLines.add(this.reformat(parts, "method", indent, comment));
+					outputLines.add(reformat(parts, "method", indent, comment));
 					break;
 				case "accessible": // Ambiguous: needs a further check
 					switch (parts[1]) {
 					case "field":
 					case "method":
-						outputLines.add(this.reformat(parts, parts[1], indent, comment));
+						outputLines.add(reformat(parts, parts[1], indent, comment));
+						break;
 					default:
 						throw new RuntimeException(String.format("Invalid type for accessible modifier \"%s\"", parts[1]));
 					}
+
+					break;
 				default:
 					throw new RuntimeException();
 				}
@@ -149,34 +145,39 @@ public final class AccessWidenerFormatter implements FormatterStep {
 		}
 
 		if (output != null) {
+			System.out.println(output.toString());
 			return output.toString();
 		}
 
 		return null;
 	}
 
-	private String reformat(String[] parts, String type, String indent, String comment) {
+	private static String reformat(String[] parts, String type, String indent, String comment) {
 		// <access>[INDENT]method[INDENT]<className>[INDENT]<methodName>[INDENT]<methodDesc>
 		String reformatted = String.format("%s%s%s%s%s%s%s%s%s", parts[0], indent, type, indent, parts[2], indent, parts[3], indent, parts[4]);
 
 		// End of line comments
 		if (comment != null) {
-			reformatted += this.createIndent();
+			reformatted += indent;
 			reformatted += comment;
 		}
 
 		return reformatted;
 	}
 
-	private String createIndent() {
-		if (this.format.useTabs) {
+	private static String createIndent(FormatOptions format) {
+		if (format.useTabs) {
 			return "\t";
 		}
 
-		return " ".repeat(Math.max(0, this.format.indentSize));
+		return " ".repeat(Math.max(0, format.indentSize));
 	}
 
-	public static final class FormatOptions {
+	private AccessWidenerFormatter() {
+	}
+
+	// Spotless raises hell if this is not serializable
+	public static final class FormatOptions implements Serializable {
 		private boolean useTabs = true;
 		private int indentSize = 4;
 
