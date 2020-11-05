@@ -43,8 +43,7 @@ public class ModResourcePackCreator implements ResourcePackProvider {
 
 	public ModResourcePackCreator(ResourceType type) {
 		this.type = type;
-		this.factory = (String name, Text text, boolean bl, Supplier<ResourcePack> supplier, PackResourceMetadata
-				metadata, ResourcePackProfile.InsertionPosition initialPosition, ResourcePackSource source) ->
+		this.factory = (name, text, bl, supplier, metadata, initialPosition, source) ->
 				new ResourcePackProfile(name, text, bl, supplier, metadata, type, initialPosition, source);
 	}
 
