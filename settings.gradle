@@ -1,3 +1,9 @@
+import java.nio.file.FileVisitResult
+import java.nio.file.Files
+import java.nio.file.SimpleFileVisitor
+import java.nio.file.Path
+import java.nio.file.attribute.BasicFileAttributes
+
 pluginManagement {
 	repositories {
 		jcenter()
@@ -12,7 +18,47 @@ pluginManagement {
 
 rootProject.name = "fabric-api"
 
-include 'fabric-api-base'
+logger.lifecycle("Finding API modules")
+
+rootProject.projectDir.eachDir { File moduleCategory ->
+	switch (moduleCategory.name) {
+	case "common":
+	case "client":
+	case "server":
+	case "deprecated":
+	case "experimental":
+		logger.lifecycle(":Loading category \"${moduleCategory.name}\"")
+
+		moduleCategory.eachDir { moduleDir ->
+			boolean isProject = false
+			boolean disabled = false
+
+			moduleDir.eachFile { file ->
+				// Modules are disabled via presence of a file
+				if (file.name == "module.disabled") {
+					isProject = false
+					disabled = true
+				}
+
+				if (file.name == "build.gradle") {
+					if (!disabled) {
+						isProject = true
+					}
+				}
+			}
+
+			if (isProject && !disabled) {
+				logger.lifecycle(":Loading project ${moduleDir.name}")
+				include moduleDir.name
+				project(":${moduleDir.name}").projectDir = moduleDir
+			} else if (disabled) {
+				logger.warn(":Ignoring disabled project ${moduleDir.name}")
+			}
+		}
+	}
+}
+
+/*include 'fabric-api-base'
 
 include 'fabric-biome-api-v1'
 include 'fabric-blockrenderlayer-v1'
@@ -51,4 +97,4 @@ include 'fabric-screen-handler-api-v1'
 include 'fabric-structure-api-v1'
 include 'fabric-tag-extensions-v0'
 include 'fabric-textures-v0'
-include 'fabric-tool-attribute-api-v1'
+include 'fabric-tool-attribute-api-v1'*/

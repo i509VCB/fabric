@@ -27,7 +27,17 @@ class Globals {
 version = Globals.baseVersion + "+" + (ENV.GITHUB_RUN_NUMBER ? "" : "local-") + getBranch()
 logger.lifecycle("Building Fabric: " + version)
 
+
 import org.apache.commons.codec.digest.DigestUtils
+import org.kohsuke.github.GHReleaseBuilder
+
+def deprecated(Project project) {
+
+}
+
+def experimental(Project project) {
+
+}
 
 def getSubprojectVersion(project, version) {
 	if (grgit == null) {
@@ -306,7 +316,7 @@ curseforge {
 
 apply from: "https://github.com/FabricMC/fabric-docs/raw/master/gradle/ideconfig.gradle"
 
-import org.kohsuke.github.GHReleaseBuilder
+
 import org.kohsuke.github.GitHub
 
 task github(dependsOn: remapMavenJar) {

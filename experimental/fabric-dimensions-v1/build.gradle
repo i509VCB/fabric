@@ -1,5 +1,6 @@
 archivesBaseName = "fabric-dimensions-v1"
 version = getSubprojectVersion(project, "1.0.0")
+experimental(project)
 
 dependencies {
 	compile project(path: ':fabric-api-base', configuration: 'dev')

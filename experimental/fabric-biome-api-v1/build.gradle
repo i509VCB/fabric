@@ -1,5 +1,6 @@
 archivesBaseName = "fabric-biome-api-v1"
 version = getSubprojectVersion(project, "3.0.0")
+experimental(project)
 
 minecraft {
     accessWidener = file("src/main/resources/fabric-biome-api-v1.accesswidener")
