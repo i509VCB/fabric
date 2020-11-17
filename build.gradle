@@ -172,6 +172,18 @@ allprojects {
 				licenseHeaderFile(rootProject.file("HEADER"))
 					.yearSeparator(", ")
 			}
+
+			// Spotless tries to be smart by ignoring package-info files, however license are present there
+			format "package-info", {
+				target "**/package-info.java"
+
+				// Only update license headers when changes have occurred
+				ratchetFrom "origin/$Globals.apiDistribution"
+
+				// Regex is `/**` or `package`
+				it.licenseHeaderFile(rootProject.file("HEADER"), "/\\*\\*|package")
+						.yearSeparator(", ")
+			}
 		}
 	}
 
