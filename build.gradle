@@ -18,6 +18,7 @@ plugins {
 def ENV = System.getenv()
 
 class Globals {
+	static def apiDistribution = "1.16"
 	static def baseVersion = "0.26.0"
 	static def mcVersion = "1.16.4"
 	static def yarnVersion = "+build.1"
@@ -165,7 +166,7 @@ allprojects {
 
 		spotless {
 			// Only update license headers when changes have occurred
-			ratchetFrom "origin/${getBranch()}"
+			ratchetFrom "origin/$Globals.apiDistribution"
 
 			java {
 				// TODO: Run with `-PspotlessSetLicenseHeaderYearsFromGitHistory=true` system property to do one off
