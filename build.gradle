@@ -166,7 +166,7 @@ allprojects {
 
 		spotless {
 			// Only update license headers when changes have occurred
-			ratchetFrom "origin/$Globals.apiDistribution"
+			//ratchetFrom "origin/$Globals.apiDistribution"
 
 			java {
 				// TODO: Run with `-PspotlessSetLicenseHeaderYearsFromGitHistory=true` system property to do one off
