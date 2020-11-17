@@ -165,12 +165,10 @@ allprojects {
 		}
 
 		spotless {
-			// Only update license headers when changes have occurred
-			//ratchetFrom "origin/$Globals.apiDistribution"
-
 			java {
-				// TODO: Run with `-PspotlessSetLicenseHeaderYearsFromGitHistory=true` system property to do one off
-				//  Check to set license year based on git history
+				// Only update license headers when changes have occurred
+				ratchetFrom "origin/$Globals.apiDistribution"
+
 				licenseHeaderFile(rootProject.file("HEADER"))
 					.yearSeparator(", ")
 			}
