@@ -10,7 +10,7 @@ plugins {
 	id "idea"
 	id "maven-publish"
 	id "fabric-loom" version "0.5.33" apply false
-	id "net.minecrell.licenser" version "0.4.1"
+	id "com.diffplug.spotless" version "5.8.2"
 	id "org.ajoberstar.grgit" version "3.1.1"
 	id "com.matthewprenger.cursegradle" version "1.4.0"
 }
@@ -89,7 +89,7 @@ allprojects {
 	apply plugin: "checkstyle"
 	apply plugin: "maven-publish"
 	apply plugin: "fabric-loom"
-	apply plugin: "net.minecrell.licenser"
+	apply plugin: "com.diffplug.spotless"
 
 	tasks.withType(JavaCompile).configureEach {
 		def targetVersion = 8
@@ -163,9 +163,16 @@ allprojects {
 			}
 		}
 
-		license {
-			header rootProject.file("HEADER")
-			include "**/*.java"
+		spotless {
+			// Only update license headers when changes have occurred
+			ratchetFrom "origin/${getBranch()}"
+
+			java {
+				// TODO: Run with `-PspotlessSetLicenseHeaderYearsFromGitHistory=true` system property to do one off
+				//  Check to set license year based on git history
+				licenseHeaderFile(rootProject.file("HEADER"))
+					.yearSeparator(", ")
+			}
 		}
 	}
 
@@ -310,8 +317,8 @@ void setupRepositories(RepositoryHandler repositories) {
 	}
 }
 
-task licenseFormatAll
-subprojects { p -> licenseFormatAll.dependsOn("${p.path}:licenseFormat") }
+//task licenseFormatAll
+//subprojects { p -> licenseFormatAll.dependsOn("${p.path}:licenseFormat") }
 subprojects.each { remapJar.dependsOn("${it.path}:remapJar") }
 
 sourceSets {
