@@ -16,6 +16,8 @@
 
 package net.fabricmc.fabric.api.item.v1;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -50,6 +52,20 @@ public class FabricItemSettings extends Item.Settings {
 	 */
 	public FabricItemSettings customDamage(CustomDamageHandler handler) {
 		FabricItemInternals.computeExtraData(this).customDamage(handler);
+		return this;
+	}
+
+	/**
+	 * Sets the provider to use to calculate an item stack's occupancy in a {@link net.minecraft.item.BundleItem bundle}.
+	 *
+	 * @return this builder
+	 * @see BundleOccupancyProvider
+	 * @deprecated Experimental feature, may be removed or changed without further notice: Snapshot feature.
+	 */
+	@ApiStatus.Experimental
+	@Deprecated
+	public FabricItemSettings bundleOccupancy(BundleOccupancyProvider provider) {
+		FabricItemInternals.computeExtraData(this).bundleOccupancy(provider);
 		return this;
 	}
 

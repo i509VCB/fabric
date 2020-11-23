@@ -16,6 +16,7 @@
 
 package net.fabricmc.fabric.mixin.item;
 
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -24,6 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.item.Item;
 
+import net.fabricmc.fabric.api.item.v1.BundleOccupancyProvider;
 import net.fabricmc.fabric.api.item.v1.CustomDamageHandler;
 import net.fabricmc.fabric.api.item.v1.EquipmentSlotProvider;
 import net.fabricmc.fabric.impl.item.FabricItemInternals;
@@ -36,6 +38,9 @@ abstract class ItemMixin implements ItemExtensions {
 
 	@Unique
 	private CustomDamageHandler customDamageHandler;
+
+	@Unique
+	private BundleOccupancyProvider bundleOccupancyProvider;
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void onConstruct(Item.Settings settings, CallbackInfo info) {
@@ -60,5 +65,16 @@ abstract class ItemMixin implements ItemExtensions {
 	@Override
 	public void fabric_setCustomDamageHandler(CustomDamageHandler handler) {
 		this.customDamageHandler = handler;
+	}
+
+	@Nullable
+	@Override
+	public BundleOccupancyProvider fabric_getBundleOccupancyProvider() {
+		return this.bundleOccupancyProvider;
+	}
+
+	@Override
+	public void fabric_setBundleOccupancyProvider(BundleOccupancyProvider provider) {
+		this.bundleOccupancyProvider = provider;
 	}
 }
