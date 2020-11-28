@@ -17,6 +17,7 @@
 package net.fabricmc.fabric.api.client.event.lifecycle.v1;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.resource.ResourcePackManager;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -51,13 +52,31 @@ public final class ClientLifecycleEvents {
 		}
 	});
 
+	public static final Event<StartResourcePackReload> START_RESOURCE_PACK_RELOAD =
+
+	public static final Event<EndResourcePackReload> END_RESOURCE_PACK_RELOAD =
+
+	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
 	public interface ClientStarted {
 		void onClientStarted(MinecraftClient client);
 	}
 
+	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
 	public interface ClientStopping {
 		void onClientStopping(MinecraftClient client);
+	}
+
+	@Environment(EnvType.CLIENT)
+	@FunctionalInterface
+	public interface StartResourcePackReload {
+		void startResourcePackReload(MinecraftClient client, ResourcePackManager resourcePackManager);
+	}
+
+	@Environment(EnvType.CLIENT)
+	@FunctionalInterface
+	public interface EndResourcePackReload {
+		void endResourcePackReload(MinecraftClient client, ResourcePackManager resourcePackManager, boolean success);
 	}
 }

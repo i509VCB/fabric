@@ -16,12 +16,18 @@
 
 package net.fabricmc.fabric.mixin.event.lifecycle.client;
 
+import java.util.concurrent.CompletableFuture;
+
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.resource.ResourcePackManager;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -31,6 +37,10 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 @Environment(EnvType.CLIENT)
 @Mixin(MinecraftClient.class)
 public abstract class MinecraftClientMixin {
+	@Shadow
+	@Final
+	private ResourcePackManager resourcePackManager;
+
 	@Inject(at = @At("HEAD"), method = "tick")
 	private void onStartTick(CallbackInfo info) {
 		ClientTickEvents.START_CLIENT_TICK.invoker().onStartTick((MinecraftClient) (Object) this);
@@ -50,5 +60,23 @@ public abstract class MinecraftClientMixin {
 	@Inject(at = @At(value = "FIELD", target = "Lnet/minecraft/client/MinecraftClient;thread:Ljava/lang/Thread;", shift = At.Shift.AFTER), method = "run")
 	private void onStart(CallbackInfo ci) {
 		ClientLifecycleEvents.CLIENT_STARTED.invoker().onClientStarted((MinecraftClient) (Object) this);
+	}
+
+	// Only start reload if we have created a future (2nd and 3rd branch).
+	@Inject(method = "reloadResources", at = @At(value = "NEW", target = "java/util/concurrent/CompletableFuture"))
+	private void startResourceReload(CallbackInfoReturnable<CompletableFuture<Void>> cir) {
+		ClientLifecycleEvents.START_RESOURCE_PACK_RELOAD.invoker().startResourcePackReload((MinecraftClient) (Object) this, this.resourcePackManager);
+	}
+
+	// Resource reloads only attach handleAsync callback to branches which create a future
+	@Inject(method = "reloadResources", at = {
+			@At(value = "RETURN", ordinal = 1), // Overlay is splashscreen
+			@At("TAIL") // Resource packs proper
+	})
+	private void endResourceReload(CallbackInfoReturnable<CompletableFuture<Void>> info) {
+		info.getReturnValue().handleAsync((value, throwable) -> {
+			ClientLifecycleEvents.END_RESOURCE_PACK_RELOAD.invoker().endResourcePackReload((MinecraftClient) (Object) this, this.resourcePackManager, throwable == null);
+			return value;
+		}, (MinecraftClient) (Object) this);
 	}
 }
