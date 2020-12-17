@@ -25,7 +25,7 @@ import net.fabricmc.fabric.api.event.EventFactory;
 
 /**
  * This event handler has been deprecated due to not hooking nicely
- * into the game. Please use the alternatives.
+ * into the game and is no longer implemented. Please use the alternatives.
  *
  * @deprecated 0.3.0
  */
