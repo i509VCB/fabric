@@ -31,7 +31,7 @@
       "net.fabricmc.fabric.impl.event.interaction.LegacyClientInteractionEventsRouter"
     ]
   },
-  "description": "Events for player interaction with blocks and entities.",
+  "description": "Legacy events for player interaction with blocks and entities, superseded by fabric-interaction-events-v1",
   "mixins": [
     "fabric-events-interaction-v0.mixins.json"
   ]

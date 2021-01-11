@@ -5,4 +5,6 @@ import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
 public final class ClientPlayerInteractEntityEvents {
+	private ClientPlayerInteractEntityEvents() {
+	}
 }

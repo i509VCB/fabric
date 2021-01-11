@@ -20,14 +20,16 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.hit.HitResult;
 
+import net.fabricmc.fabric.api.client.interaction.v1.event.player.ClientPickItemEvents;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 
 /**
  * This event handler has been deprecated due to not hooking nicely
- * into the game and is no longer implemented. Please use the alternatives.
+ * into the game and is no longer implemented. Please use the alternatives provided in {@link ClientPickItemEvents}.
  *
- * @deprecated 0.3.0
+ * @see ClientPickItemEvents
+ * @deprecated 0.3.0; Please migrate to {@link ClientPickItemEvents}
  */
 @SuppressWarnings("DeprecatedIsStillUsed")
 @Deprecated
