@@ -4,3 +4,7 @@ version = getSubprojectVersion(project, "0.4.1")
 moduleDependencies(project, [
 		'fabric-api-base'
 ])
+
+dependencies {
+	// testmodCompile project(path: ':fabric-lifecycle-events-v1', configuration: 'dev')
+}
