@@ -36,9 +36,64 @@ import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
  * Can also be used to generate or customize outputs based on world state instead of
  * or in addition to block state when render chunks are rebuilt.
  *
- * <p>Note for {@link Renderer} implementors: Fabric causes BakedModel to extend this
+ * <p><b>Implementing FabricBakedModel</b>
+ * <p>To implement FabricBakedModel, you will create a new class which extends {@link BakedModel} and FabricBakedModel.
+ * In order to use the model extensions, you need to make sure {@link #isVanillaAdapter()} returns true.
+ * If {@link #isVanillaAdapter()} is false, {@link #emitBlockQuads(BlockRenderView, BlockState, BlockPos, Supplier, RenderContext)}
+ * or {@link #emitItemQuads(ItemStack, Supplier, RenderContext)} are used to buffer quads for the model.
+ *
+ * <p>Below is an incomplete implementation of FabricBakedModel to show an example of how FabricBakedModel may be implemented:
+ * <pre>{@code
+ * class ExampleBakedModel implements BakedModel, FabricBakedModel {
+ * 	private final Mesh exampleMesh;
+ *
+ * 	&#64;Override
+ * 	public List&lt;BakedQuad&gt; getQuads(&#64;Nullable BlockState state, &#64;Nullable Direction face, Random random) {
+ * 		// Return no quads since the renderer API will cause the game not to use this method.
+ * 		return Collections.emptyList();
+ * 	}
+ *
+ * 	// Other BakedModel methods elided here...
+ *
+ * 	&#64;Override
+ * 	public boolean isVanillaAdapter() {
+ * 		return false; // Must return true
+ * 	}
+ *
+ * 	&#64;Override
+ * 	public void emitBlockQuads(BlockRenderView blockView, BlockState state, BlockPos pos, Supplier&lt;Random&gt; randomSupplier, RenderContext context) {
+ * 		// Buffer the mesh. Meshes should be used where possible to save memory overhead.
+ * 		// You should NOT get the block entity from the block view.
+ * 		// You should use the data attachment module in Fabric API to obtain data from the block entity in a thread safe manner.
+ * 		context.meshConsumer().accept(this.exampleMesh);
+ * 		this.emitDynamicQuads(context);
+ * 	}
+ *
+ * 	&#64;Override
+ * 	public void emitItemQuads(ItemStack stack, Supplier&lt;Random&gt; randomSupplier, RenderContext context) {
+ * 		// Buffer the mesh. Meshes should be used where possible to save memory overhead.
+ * 		// You should NOT modify the item stack
+ * 		context.meshConsumer().accept(this.exampleMesh);
+ * 		this.emitDynamicQuads(context);
+ * 	}
+ *
+ * 	private void emitDynamicQuads(RenderContext context) {
+ * 		// You can also get the quad emitter from the context and directly buffer.
+ * 		// This is useful for rendering dynamically, but you are encouraged to use a mesh where you can statically build the mesh ahead of time.
+ * 		// This is useful for rendering when you may need to retrieve context from a block entity or item stack.
+ * 		QuadEmitter emitter = context.getEmitter();
+ * 		... Buffer directly using the quad emitter dynamically
+ * 	}
+ * }
+ * }</pre>
+ *
+ * <p><b>Note for {@link Renderer} implementors:</b>
+ * <p>Fabric causes BakedModel to extend this
  * interface with {@link #isVanillaAdapter()} == true and to produce standard vertex data.
  * This means any BakedModel instance can be safely cast to this interface without an instanceof check.
+ *
+ * @see net.fabricmc.fabric.api.renderer.v1.mesh.Mesh
+ * @see net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter
  */
 public interface FabricBakedModel {
 	/**
